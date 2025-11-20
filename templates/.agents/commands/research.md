@@ -16,13 +16,13 @@ Workflow:
 
 2. **Create Artifact Directory**
    - Ensure `.beads/artifacts/<bead-id>/` exists.
-   - Create `.beads/artifacts/<bead-id>/research.md` if it doesn't exist.
+   - **MANDATORY**: You MUST create or update `.beads/artifacts/<bead-id>/research.md`. If the file exists, read it first, then append or update with new findings. If it doesn't exist, create it.
 
 3. **Conduct Research (Leverage Amp Tools)**
    - **Local Code**: Explore the codebase using `finder` and `Grep`.
    - **Libraries (MCP)**: Use `context7` or `mcp__*` tools to fetch up-to-date docs for any libraries involved (e.g., Prisma, Next.js).
    - **External/Cross-Repo (Librarian)**: If you need to understand upstream dependencies or patterns in other repos, explicitly ask the **Librarian**.
-   - **Document findings** in `research.md`:
+   - **WRITE THE FILE**: Save your findings to `.beads/artifacts/<bead-id>/research.md` using `create_file`.
      - Problem statement / Goals.
      - Relevant files and code paths.
      - Potential approaches and trade-offs.
