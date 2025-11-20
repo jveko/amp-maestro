@@ -42,7 +42,7 @@ graph TD
     Implement --> Land
 ```
 
-It forces AI agents to behave like senior engineers:
+It enforces a structured process:
 
 1.  **Research**: Understand the problem deeply before touching code.
 2.  **Plan**: Create a detailed, architectural plan (with Oracle reasoning).
@@ -55,7 +55,7 @@ It forces AI agents to behave like senior engineers:
 *   **[Amp](https://ampcode.com)**: The AI Coding Agent (with Oracle & Sub-agents).
 *   **[Beads (bd)](https://github.com/beads-dev/beads)**: Lightweight, CLI-first issue tracking that lives in git.
 *   **[Branchlet](https://github.com/raghavpillai/branchlet)**: Git worktree manager for isolated agent environments.
-*   **[HumanLayer](https://github.com/humanlayer/humanlayer)**: Pioneers of the "Context Engineering" and "12-Factor Agent" methodologies this workflow is based on.
+*   **[HumanLayer](https://github.com/humanlayer/humanlayer)**: Creators of the "Context Engineering" and "12-Factor Agent" methodologies this workflow is based on.
 
 ## Installation
 
