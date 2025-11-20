@@ -10,18 +10,36 @@ This workflow implements the **"Frequent Intentional Compaction"** methodology c
 
 ```mermaid
 graph LR
-    %% High Contrast / Dark Mode Friendly
+    %% Styling for Dark Mode / High Contrast
     classDef default fill:#2d2d2d,stroke:#fff,stroke-width:2px,color:#fff;
-    classDef action fill:#005faf,stroke:#fff,stroke-width:2px,color:#fff;
+    classDef bead fill:#b45309,stroke:#fff,stroke-width:2px,color:#fff; %% Orange/Brown
+    classDef git fill:#1d4ed8,stroke:#fff,stroke-width:2px,color:#fff; %% Blue
+    classDef amp fill:#7e22ce,stroke:#fff,stroke-width:2px,color:#fff; %% Purple
 
-    Start([Start]) --> Plan
-    Plan["/plan"] --> Implement
-    Implement["/implement"] --> Merge([Merge])
+    New([User Input]) --> Create
     
-    Implement -.-> Compact["/compact"]
-    Compact -.-> Implement
+    subgraph "1. Track (Beads)"
+        Create["/bd-create"]:::bead
+    end
 
-    class Plan,Implement,Compact action;
+    subgraph "2. Isolate (Git)"
+        Worktree["/branchlet"]:::git
+    end
+
+    subgraph "3. Agent Loop"
+        Research["/research"]:::amp --> Plan["/plan"]:::amp
+        Plan --> Implement["/implement"]:::amp
+        Implement -.-> Compact["/compact"]:::amp
+        Compact -.-> Implement
+    end
+    
+    subgraph "4. Ship"
+        Land["/land-plane"]:::git
+    end
+
+    Create --> Worktree
+    Worktree --> Research
+    Implement --> Land
 ```
 
 It forces AI agents to behave like senior engineers:
