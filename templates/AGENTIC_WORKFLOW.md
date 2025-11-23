@@ -41,6 +41,7 @@ graph TD
     subgraph "4. Implementation"
         Implement["/implement (Driver/Navigator)"]
         Verify{Tests Pass?}
+        HumanCheck{Human: Commit?}
     end
     
     subgraph "5. Review"
@@ -48,10 +49,11 @@ graph TD
     end
     
     Approve -- Yes --> Implement
-    Implement -- "Commit" --> Verify
-    Implement -- "Refine" --> Implement
+    Implement --> Verify
     Verify -- No --> Implement
-    Verify -- Yes --> Review
+    Verify -- Yes --> HumanCheck
+    HumanCheck -- "Refine" --> Implement
+    HumanCheck -- "Commit" --> Review
     
     subgraph "6. Land & Merge"
         Land["/land-plane"]
@@ -106,6 +108,7 @@ graph TD
     1. **Propose**: State intent and pattern match.
     2. **Execute**: Run subagent/task.
     3. **Pair Check**: Stop and ask user "Commit, Refine, or Revert?".
+    4. **Decision**: User must explicitly authorize the commit to proceed to the next step.
   - **Agent**: Updates `implementation.md` with results and syncs docs if architecture changed.
   - **Agent**: Verifies builds/tests so that every canonical command in the plan has a recent, passing run recorded in `implementation.md`.
 

@@ -116,14 +116,14 @@ cd amp-maestro
 
 | Command | Stage | Why/When |
 | :--- | :--- | :--- |
-| `/bd-create` | Ideation | File new beads with lineage and priority. |
-| `/bd-next` | Setup | Select the next bead to execute. |
-| `/branchlet-from-bead` | Setup | Create an isolated worktree tied to the bead. |
-| `/context` | Setup | Load artifacts and summarize the bead’s current state. |
+| `/bd-create` | Track | Capture new work as a Bead with lineage and priority. |
+| `/bd-next` | Track → Setup | Let Amp propose the best bead to pull next and tee up `/branchlet-from-bead`. |
+| `/branchlet-from-bead` | Isolate | Spawn a dedicated worktree tied to the bead so git state stays focused. |
+| `/context` | Setup | Load existing artifacts (`research.md`, `plan.md`, `implementation.md`, notes) into the session. |
 | `/kb-build` *(optional)* | Setup | Refresh the shared knowledge base when architecture/code references drift. |
 | `/spec` *(optional)* | Research | Turn large or ambiguous beads into a formal `spec.md` before planning. |
-| `/research` | Research | Gather code references, identify existing patterns, and write `research.md`. |
-| `/plan` | Plan | Interview user on architecture, then use Oracle to derive `plan.md`. |
+| `/research` | Research | Gather code references and write `research.md` so later steps have hard context. |
+| `/plan` | Plan | Use the Oracle to derive an executable plan stored in `plan.md`, including a Test Plan that defines canonical build/test commands by label (e.g., `test:unit`, `lint:ci`). |
 | `/split` *(conditional)* | Plan | Break composite work into child beads; keeps implementation beads atomic. |
 | `/implement` | Work | Run the Driver/Navigator loop: propose, execute, and verify each step with the user. |
 | `/review` | Quality | Verify implementation, check for slopsquatting/security risks, and generate a Review Capsule. |
