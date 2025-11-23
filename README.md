@@ -24,6 +24,7 @@ graph TD
     classDef bead fill:#b45309,stroke:#fff,stroke-width:2px,color:#fff; %% Orange/Brown
     classDef git fill:#1d4ed8,stroke:#fff,stroke-width:2px,color:#fff; %% Blue
     classDef amp fill:#7e22ce,stroke:#fff,stroke-width:2px,color:#fff; %% Purple
+    classDef decision fill:#8b4500,stroke:#fff,stroke-width:2px,color:#fff;
 
     New([User Input]) --> Create
     
@@ -32,15 +33,26 @@ graph TD
     end
 
     subgraph "2. Isolate (Git)"
-        Worktree["/branchlet"]:::git
+        Worktree["/branchlet-from-bead"]:::git
     end
 
     subgraph "3. Agent Loop"
         KB["/kb-build"]:::amp --> Research["/research"]:::amp
         Research --> Plan["/plan"]:::amp
-        Plan --> Implement["/implement"]:::amp
-        Implement --> Log["implementation.md"]:::amp
-        Log --> Review["/review"]:::amp
+        Plan --> ArchCheck{Human: Approve Arch?}:::decision
+        ArchCheck -- "Refine" --> Plan
+        ArchCheck -- "Yes" --> Complexity{Atomic?}:::decision
+        
+        Complexity -- No (Composite) --> Split["/split"]:::amp
+        Complexity -- Yes (Atomic) --> Implement["/implement (Driver/Navigator)"]:::amp
+        
+        Implement --> Verify{Tests Pass?}:::decision
+        Verify -- No --> Implement
+        Verify -- Yes --> HumanCheck{Human: Commit?}:::decision
+        
+        HumanCheck -- "Refine" --> Implement
+        HumanCheck -- "Commit" --> Log["implementation.md"]:::amp
+        Log --> Review["/review (Capsule)"]:::amp
     end
     
     subgraph "4. Ship"
@@ -91,12 +103,17 @@ cd amp-maestro
 1.  **Slash Commands** (`.agents/commands/`):
     *   `/bd-create`: Interview-first issue creation.
     *   `/bd-next`: Pick tasks and guide you into a fresh worktree.
+    *   `/branchlet-from-bead`: Create an isolated worktree tied to a bead.
+    *   `/context`: Load artifacts and summarize current state.
     *   `/kb-build`: Build/update shared repository knowledge.
+    *   `/spec`: Turn ambiguous beads into `spec.md`.
     *   `/research`: Deep context gathering (Librarian/MCP).
     *   `/plan`: Oracle-powered implementation planning.
+    *   `/split`: Break composite plans into child beads.
     *   `/implement`: Manager/Worker implementation loop with runtime notes.
     *   `/review`: Plan vs. Implementation verification plus QA capsule.
-    *   `/land-plane`: Final pre-merge checklist.
+    *   `/land-plane`: Final pre-merge checklist and landing artifact.
+    *   `/bead-notes`: Append session summaries back into Beads.
 
 2.  **Protocols**:
     *   `AGENTIC_WORKFLOW.md`: The master protocol document.
@@ -106,7 +123,7 @@ cd amp-maestro
 
 1.  **Start**: `amp`
 2.  **Pick Work**: `/bd-next` (or `/bd-create` for new ideas).
-3.  **Deep Work**: The agent will guide you through `/research` -> `/plan` -> `/implement` -> `/review`.
+3.  **Deep Work**: For a chosen bead ID, run `/context <id>` to load artifacts, then follow `/research <id>` → `/plan <id>` → `/implement <id>` → `/review <id>`.
     *   **Important**: Start a new Amp thread after each command to ensure clean context.
     *   **Note**: Commands populate the chat with a prompt. **Paste the Bead ID** at the end of the command before sending.
     *   During `/implement`, copy the canonical build/test command labels from the Test Plan in `.beads/artifacts/<id>/plan.md` into `.beads/artifacts/<id>/implementation.md`, and record actual runs and deviations there instead of ever editing `plan.md`; `/review` and `/land-plane` always refer back to those same labeled commands.
