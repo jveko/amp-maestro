@@ -1,5 +1,14 @@
-# Amp Maestro
+# Amp Agentic Workflow
 
+```
+  __  __                 _
+ |  \/  |               | |
+ | \  / | __ _  ___  ___| |_ _ __ ___
+ | |\/| |/ _` |/ _ \/ __| __| '__/ _ \
+ | |  | | (_| |  __/\__ \ |_| | | (_) |
+ |_|  |_|\__,_|\___||___/\__|_|  \___/
+            Amp Maestro
+```
 A structured workflow for Sourcegraph Amp designed for complex tasks. It adds planning, context management, and sub-agent orchestration.
 
 It utilizes **Beads** (Issue Tracking) and **Branchlet** (Worktrees) to manage agent context and isolation.
