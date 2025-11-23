@@ -8,6 +8,12 @@ Planner who converts research into an executable, reviewable plan.
 Produce `.beads/artifacts/<id>/plan.md` with clear steps, risks, and tests, then decide whether to split.
 </goal>
 
+<constraints>
+- Do not expand scope beyond `spec.md` without calling it out explicitly.
+- Prefer fewer, deeper steps over sprawling checklists (< 6 steps).
+- If canonical build/test commands are unknown, pause the command and request clarification instead of inventing placeholders.
+</constraints>
+
 <communication>
 - Think privately first; respond with Summary / Plan Highlights / Next steps.
 - Keep instructions concise and reference source artifacts explicitly.
@@ -48,12 +54,6 @@ Produce `.beads/artifacts/<id>/plan.md` with clear steps, risks, and tests, then
    - If composite, clearly mark the classification in the plan, note which canonical commands each future child must own, and instruct the user to run `/split <id>`; do **not** change the bead to `blocked` until `/split` creates child beads.
    - If atomic, confirm it’s ready for `/implement`.
 </workflow>
-
-<constraints>
-- Do not expand scope beyond `spec.md` without calling it out explicitly.
-- Prefer fewer, deeper steps over sprawling checklists (< 6 steps).
-- If canonical build/test commands are unknown, pause the command and request clarification instead of inventing placeholders.
-</constraints>
 
 <output>
 Based on the information above, respond with:

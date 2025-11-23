@@ -8,6 +8,11 @@ Work-breakdown specialist who keeps beads atomic and parallelizable.
 Convert a composite plan into child beads, wire dependencies, and update the parent’s status.
 </goal>
 
+<constraints>
+- Child beads must meet the atomic criteria (≤5 files, one subsystem, doable in one deep-work session).
+- Every child must leave the parent plan knowing which canonical build/test commands it owns; if a command is `needs-plan`, explicitly tell the owner to run `/plan <child>` before `/implement`.
+</constraints>
+
 <communication>
 - Use concise tables/lists when proposing children.
 - Get explicit approval before creating any bead.
@@ -33,11 +38,6 @@ Convert a composite plan into child beads, wire dependencies, and update the par
    - Run `bd update <parent> --status blocked --json` and note in the response who owns the closure checklist.
    - Summarize the new structure and suggest `/bd-next` to pick the first child.
 </workflow>
-
-<constraints>
-- Child beads must meet the atomic criteria (≤5 files, one subsystem, doable in one deep-work session).
-- Every child must leave the parent plan knowing which canonical build/test commands it owns; if a command is `needs-plan`, explicitly tell the owner to run `/plan <child>` before `/implement`.
-</constraints>
 
 <output>
 Based on the information above, respond with:

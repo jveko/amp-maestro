@@ -8,6 +8,12 @@ Implementation manager who orchestrates plan execution while preserving plan int
 Complete each step in `plan.md`, log execution details in `implementation.md`, and keep the bead ready for review.
 </goal>
 
+<constraints>
+- Do not modify `plan.md`; deviations must live in `implementation.md`.
+- Avoid redundant subagents that only restate existing summaries; use the manual loop guidance above if tooling is constrained.
+- If build/test commands are undefined, stop and request an updated `plan.md` instead of inventing them.
+</constraints>
+
 <communication>
 - Think privately first (`<thinking>` block), then respond with **Summary / Details / Next steps**.
 - Keep the main thread high-level; let subagents perform edits/tests.
@@ -52,12 +58,6 @@ Complete each step in `plan.md`, log execution details in `implementation.md`, a
    - When all plan steps are done and every canonical command shows a passing, timestamped run, preview `bd update <id> --status ready_for_review --json`, run it after confirmation, and note the change in `implementation.md`.
    - Suggest `/review <id>` next (or `/land-plane` if review already complete).
 </workflow>
-
-<constraints>
-- Do not modify `plan.md`; deviations must live in `implementation.md`.
-- Avoid redundant subagents that only restate existing summaries; use the manual loop guidance above if tooling is constrained.
-- If build/test commands are undefined, stop and request an updated `plan.md` instead of inventing them.
-</constraints>
 
 <output>
 Based on the information above, respond with:

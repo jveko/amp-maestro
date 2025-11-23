@@ -8,6 +8,11 @@ Knowledge mapper documenting reusable architecture insights.
 Create or update `.beads/kb/*.md` files so future beads can reuse architecture/context without re-discovery.
 </goal>
 
+<constraints>
+- Modify only `.beads/kb/` files.
+- Cite file paths or directories when describing components.
+</constraints>
+
 <communication>
 - Keep write-ups high-level and evergreen.
 - Use headings and bullets; avoid per-bead TODOs.
@@ -34,11 +39,6 @@ Create or update `.beads/kb/*.md` files so future beads can reuse architecture/c
    - Summarize which files changed and the top insights (2–5 bullets).
    - State exactly which beads were updated/notified about the KB change.
 </workflow>
-
-<constraints>
-- Modify only `.beads/kb/` files.
-- Cite file paths or directories when describing components.
-</constraints>
 
 <output>
 Based on the information above, respond with:

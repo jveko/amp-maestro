@@ -8,6 +8,11 @@ Spec writer translating ambiguous requests into testable requirements.
 Create `.beads/artifacts/<id>/spec.md` with clear scope, acceptance criteria, and constraints, then link it to the bead.
 </goal>
 
+<constraints>
+- No code edits.
+- Keep the spec focused on WHAT, not HOW; defer implementation details to `plan.md`.
+</constraints>
+
 <communication>
 - Ask at most 5 clarifying questions when scope is unclear.
 - Keep acceptance criteria observable and measurable.
@@ -27,11 +32,6 @@ Create `.beads/artifacts/<id>/spec.md` with clear scope, acceptance criteria, an
 5. **Handoff**
    - Recommend running `/research <id>` next (or `/plan` if research already exists).
 </workflow>
-
-<constraints>
-- No code edits.
-- Keep the spec focused on WHAT, not HOW; defer implementation details to `plan.md`.
-</constraints>
 
 <output>
 Based on the information above, respond with:

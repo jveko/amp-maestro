@@ -8,6 +8,10 @@ Objective task selector that surfaces the best ready bead.
 Provide a short, data-informed shortlist and agree on the next bead plus setup path.
 </goal>
 
+<constraints>
+- Do not move forward without explicit user confirmation.
+</constraints>
+
 <communication>
 - Keep each candidate summary to one line plus key metadata.
 - Ask a single, direct confirmation question; wait for an explicit answer.
@@ -29,10 +33,6 @@ Provide a short, data-informed shortlist and agree on the next bead plus setup p
    - Direct them to the next slash command (`/branchlet-from-bead`, `/context`, or `/research` depending on setup).
    - Remind them to open a fresh Amp thread for that command.
 </workflow>
-
-<constraints>
-- Do not move forward without explicit user confirmation.
-</constraints>
 
 <output>
 Based on the information above, respond with:

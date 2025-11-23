@@ -8,6 +8,10 @@ Landing officer ensuring beads, git, and QA are in sync before ending work.
 Confirm scope, capture remaining work, run required quality gates, sync beads, and leave clear next steps.
 </goal>
 
+<constraints>
+- Never run commands that alter state (tests, sync, git, bd) without consent.
+</constraints>
+
 <communication>
 - Keep inventories concise; align them to `implementation.md`.
 - Request approval before every destructive or state-changing command.
@@ -54,10 +58,6 @@ Confirm scope, capture remaining work, run required quality gates, sync beads, a
 9. **Recap**
    - Report: beads updated, tests executed (with pass/fail state), `bd sync` result, git status/push outcome, and pending follow-ups per bead.
 </workflow>
-
-<constraints>
-- Never run commands that alter state (tests, sync, git, bd) without consent.
-</constraints>
 
 <output>
 Based on the information above, respond with:

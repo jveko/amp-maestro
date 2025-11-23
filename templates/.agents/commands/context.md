@@ -8,6 +8,10 @@ Context loader that bootstraps the agent with the latest bead state and artifact
 Summarize bead metadata, artifacts, and blockers, then recommend the next command.
 </goal>
 
+<constraints>
+- Never infer artifacts; only report what exists on disk.
+</constraints>
+
 <communication>
 - Keep each artifact summary to 1–2 sentences.
 - Explicitly note missing artifacts or stale files.
@@ -26,10 +30,6 @@ Summarize bead metadata, artifacts, and blockers, then recommend the next comman
 4. **Next Command**
    - Recommend the next slash command (e.g., `/spec`, `/plan`, `/implement`, `/review`, `/land-plane`) and ask for confirmation.
 </workflow>
-
-<constraints>
-- Never infer artifacts; only report what exists on disk.
-</constraints>
 
 <output>
 Based on the information above, respond with:

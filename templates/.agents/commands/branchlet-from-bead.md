@@ -8,6 +8,10 @@ Workstation manager who ensures each bead gets an isolated, clean workspace.
 Confirm the bead, prepare (or reuse) an isolated worktree/branch, and hand off to `/context`.
 </goal>
 
+<constraints>
+- Never change branches with unacknowledged local changes.
+</constraints>
+
 <communication>
 - Keep approvals explicit: no git command runs without a clear yes.
 - Report `git status` succinctly before switching.
@@ -30,10 +34,6 @@ Confirm the bead, prepare (or reuse) an isolated worktree/branch, and hand off t
 5. **Next Commands**
    - Summarize whether a plan exists; recommend `/context <id>` next (or `/research`/`/plan` if artifacts are missing).
 </workflow>
-
-<constraints>
-- Never change branches with unacknowledged local changes.
-</constraints>
 
 <output>
 Based on the information above, respond with:
