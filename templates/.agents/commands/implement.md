@@ -14,14 +14,29 @@ Complete each step in `plan.md`, log execution details in `implementation.md`, a
 </communication>
 
 <workflow>
-1. **Manager Loop**
-   - Confirm `.beads/artifacts/<id>/plan.md` is approved; treat it as read-only.
-   - Ensure `.beads/artifacts/<id>/implementation.md` exists; if missing, create it (with `## Build & Test Commands` and `## Implementation Notes`) before logging.
-   - Copy the canonical build/test command labels from the plan’s Test Plan section into the `## Build & Test Commands` table so every later stage references the same IDs; you may not invent new labels during `/implement`—route gaps back to `/plan` instead.
-   - Verify the bead’s `Context` block lists `- Implementation: .beads/artifacts/<id>/implementation.md`; if missing, append it via `bd update <id> --context-add "- Implementation: .beads/artifacts/<id>/implementation.md" --json`.
-   - Identify the next uncompleted step; when status changes are needed, preview `bd update <id> --status in_progress --json` (or the appropriate status) and run it only after explicit approval so downstream selectors see the accurate bead state.
-   - Assume a single active `/implement` session is updating `implementation.md` at a time; if you detect concurrent edits (e.g., via `git status` or conflicting notes), call this out explicitly and coordinate by appending clearly labeled, timestamped entries instead of rewriting prior content.
-   - For each step, spawn a subagent (Task tool) with a clear objective; only run one step at a time. If the Task tool is unavailable, run the loop yourself (describe intent, execute, and log) while preserving the same structure.
+1. **Manager Loop (Driver/Navigator)**
+   - **Contextualize**:
+     - Confirm `.beads/artifacts/<id>/plan.md` is approved; treat it as read-only.
+     - Ensure `.beads/artifacts/<id>/implementation.md` exists (create if missing with `## Build & Test Commands` and `## Implementation Notes`).
+     - Copy canonical build/test command labels from the plan into the `## Build & Test Commands` table.
+     - Verify bead `Context` links to `implementation.md`.
+   - **The Pair Programming Loop (Repeat for each Step)**:
+     1. **Propose**: 
+        - Read the plan step, `spec.md`, and relevant files.
+        - **Context Check**: Identify the established pattern (from `research.md` or existing code) you will mimic.
+        - State explicitly: "Based on **[Plan/Pattern]**, I am about to edit `X` to achieve `Y`. I will use library `Z` to match our existing style."
+     2. **Execute**: 
+        - Spawn a subagent (Task tool) to apply the edit and run local verification (lint/test).
+        - **Docs-Sync Rule**: If this step changes architecture, patterns, or public APIs, the subagent **MUST** update the relevant documentation (or `research.md` notes) in the *same commit*.
+     3. **Stop & Verify (The "Pair Check")**:
+        - Present the `git diff --stat` and the test result.
+        - ask: **"I've applied the changes. Tests passed. Do you want to (A) Commit & Continue, (B) Refine this, or (C) Revert?"**
+        - **Do NOT** proceed to the next plan step until the user explicitly says "Commit" or "Continue".
+        - If the user says "Refine", fix the issue immediately (stay in this step).
+     4. **Log**: Update `.beads/artifacts/<id>/implementation.md` with the result (table row + notes).
+   - **State Management**:
+     - Identify the next uncompleted step; preview `bd update` status changes.
+     - Assume single active session; warn on concurrent edits.
 2. **Subagent Expectations**
    - Begin with `<thinking>` describing goal, plan of attack, and relevant files/tests.
    - Execute edits/tests; capture results succinctly.

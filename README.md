@@ -59,6 +59,7 @@ It enforces a structured process:
 3.  **Manager/Worker**: The main agent acts as a manager, spawning sub-agents for implementation to keep context clean.
 4.  **Compaction**: Regularly summarizing work into durable artifacts (`research.md`, `plan.md`, `implementation.md`, `review.md`, `landing.md`, optional `sessions/*.md`, and bead notes stored via `/bead-notes`) to prevent context window pollution.
 5.  **Artifacts over Memory**: Using the filesystem (`.beads/artifacts/`) as long-term memory, linked to Issues (`bd`); `plan.md` defines canonical build/test commands by label, `implementation.md` logs their actual runs and deviations, and `review.md`/`landing.md` consume those same labels for QA evidence.
+6.  **Delegated Authority**: Humans must explicitly authorize state changes ("Commit", "Land") via the Driver/Navigator loop and Pre-Flight checklists; agents propose, humans dispose.
 
 ## The Stack
 
@@ -115,18 +116,18 @@ cd amp-maestro
 
 | Command | Stage | Why/When |
 | :--- | :--- | :--- |
-| `/bd-create` | Track | Capture new work as a Bead with lineage and priority. |
-| `/bd-next` | Track → Setup | Let Amp propose the best bead to pull next and tee up `/branchlet-from-bead`. |
-| `/branchlet-from-bead` | Isolate | Spawn a dedicated worktree tied to the bead so git state stays focused. |
-| `/context` | Setup | Load existing artifacts (`research.md`, `plan.md`, `implementation.md`, notes) into the session. |
+| `/bd-create` | Ideation | File new beads with lineage and priority. |
+| `/bd-next` | Setup | Select the next bead to execute. |
+| `/branchlet-from-bead` | Setup | Create an isolated worktree tied to the bead. |
+| `/context` | Setup | Load artifacts and summarize the bead’s current state. |
 | `/kb-build` *(optional)* | Setup | Refresh the shared knowledge base when architecture/code references drift. |
 | `/spec` *(optional)* | Research | Turn large or ambiguous beads into a formal `spec.md` before planning. |
-| `/research` | Research | Gather code references and write `research.md` so later steps have hard context. |
-| `/plan` | Plan | Use the Oracle to derive an executable plan stored in `plan.md`, including a Test Plan that defines canonical build/test commands by label (e.g., `test:unit`, `lint:ci`). |
+| `/research` | Research | Gather code references, identify existing patterns, and write `research.md`. |
+| `/plan` | Plan | Interview user on architecture, then use Oracle to derive `plan.md`. |
 | `/split` *(conditional)* | Plan | Break composite work into child beads; keeps implementation beads atomic. |
-| `/implement` | Work | Run the manager/worker loop, executing plan steps and updating the canonical command table and runtime notes/tests in `implementation.md` while keeping `plan.md` read-only. |
-| `/review` | Quality | Classify risk/atomicity, compare against plan + logs, and produce `review.md` with QA evidence keyed to canonical commands plus a PR-ready summary; missing or un-runnable QA results in a No-Go decision and follow-up work. |
-| `/land-plane` | Ship | Revalidate the same canonical commands, recording rerun results in `landing.md`, then sync beads, commit with `Refs <id>`, and queue next actions; failures or tool/infra outages are treated as blockers, not soft warnings. |
+| `/implement` | Work | Run the Driver/Navigator loop: propose, execute, and verify each step with the user. |
+| `/review` | Quality | Verify implementation, check for slopsquatting/security risks, and generate a Review Capsule. |
+| `/land-plane` | Ship | Run semantic pre-flight checks, revalidate canonical commands, sync beads, and commit. |
 | `/bead-notes` *(optional)* | Context Hygiene | Append a concise session summary back to the bead’s notes for future agents. |
 
 ## Requirements

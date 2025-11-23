@@ -20,11 +20,23 @@ Produce `.beads/artifacts/<id>/plan.md` with clear steps, risks, and tests, then
 <workflow>
 1. **Load Context**
    - Run `bd show <id> --json`, read `spec.md` (if present), `research.md`, and relevant `.beads/kb/*`.
-2. **Plan via Oracle**
-   - Provide Oracle with bead metadata, research excerpts, constraints, and non-goals.
+2. **Architectural Interview (Anti-Drift)**
+   - Before writing any plan, you **MUST** interview the user to ground the architecture.
+   - **Context Synthesis**: Synthesize findings from `research.md` (especially "Existing Patterns") and `spec.md`.
+   - **The Ask**:
+     - "Based on `research.md`, I see we handle `X` using pattern `Y`. I plan to follow this. Is that correct?"
+     - "I plan to use library `X` (v...) and modify schema `Y`. This respects our pattern of `Z`. Is this correct?"
+     - "Are there any legacy constraints or service boundaries I should be aware of?"
+   - **Wait** for user confirmation. If they correct you ("We don't use `axios`, use `fetch`"), adjust your mental model immediately.
+3. **Plan via Oracle**
+   - Provide Oracle with bead metadata, research excerpts, constraints, and **user interview results**.
+   - **Architectural Litmus Test**: Explicitly evaluate the plan against:
+     - **Deep Modules**: Do interfaces hide complexity, or do they leak implementation details?
+     - **Orthogonality**: If we change this, what unrelated things might break?
+     - **Data Gravity**: If schema changes are involved, is backward/forward compatibility preserved?
    - Request a markdown plan with sections: Context, Goals, Risks, Implementation Steps (numbered, atomic), Test Plan.
-   - The Test Plan must enumerate every canonical build/test command by explicit label (e.g., `test:unit`, `lint:ci`, `npm run e2e`) plus success criteria so later commands can reference them verbatim; do not exit `/plan` without these labels.
-3. **Write Artifact**
+   - The Test Plan must enumerate every canonical build/test command by explicit label (e.g., `test:unit`, `lint:ci`, `npm run e2e`) plus success criteria.
+4. **Write Artifact**
    - Save output to `.beads/artifacts/<id>/plan.md` (no tool logs) and add appendices `## Child Beads` and `## Parent Closure Checklist` (both can start empty) reserved for `/split` so the main body stays immutable after approval.
    - Confirm the Test Plan section clearly labels each canonical command; these labels become the IDs reused in `implementation.md`, `review.md`, and `/land-plane`.
    - Treat the file as immutable after approval, except for `/split` edits inside `## Child Beads` or `## Parent Closure Checklist`; other deviations must live in `implementation.md`.

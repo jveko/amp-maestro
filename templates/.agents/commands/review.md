@@ -20,14 +20,41 @@ Assess the diff, classify risk, document deviations/tests in `review.md`, and pr
 2. **Artifact Review**
    - Load `spec.md`, `plan.md`, `implementation.md`, and `bd show <id> --json`.
    - Note acceptance criteria, plan steps, and any logged deviations/tests.
-3. **Risk Classification**
+3. **Risk Classification & Supply Chain Check**
    - Fast-Track if ≤5 files, no security-sensitive surfaces, tests recorded.
-   - Otherwise Elevated; explain why (e.g., “touches auth + DB”, “missing tests”).
-   - Explicitly review for security impact: auth/authz flows, secrets handling, cryptography, user data exposure. Call out any concerns as deviations or required follow-ups.
+   - **Mandatory Dependency Check ("Slopsquatting")**:
+     - If `package.json`/`requirements.txt`/`go.mod` etc. changed:
+       1. List **every** new dependency.
+       2. Run `npm view <name>` (or equivalent) to **prove** it exists in the registry. **Do not guess.**
+       3. If it fails lookup -> **FAIL** review (Status: `Slopsquatting Risk`).
+       4. Output a table: `| Dep Name | Exists in Registry? (Cmd Output) | First Use? |`
+   - **Security Evidence**:
+     - Don't just ask "Is it secure?". **Prove it**:
+       - "Show me the line numbers where input is sanitized."
+       - "Show me the auth check for the new endpoint."
+     - If you cannot find the line, flag as **Deviation**.
+   - **Code Quality Heuristics**:
+     - **Deep vs Shallow**: Flag any "Shallow Modules" (classes/functions with complex interfaces but little functionality).
+     - **ETC (Easier To Change)**: Is this code "Easier To Change"? Flag hardcoded assumptions or tight coupling.
+     - **Comments**: Do comments explain *why* (intent) or just repeat *what* the code does?
+   - Explicitly review for security impact: auth/authz flows, secrets handling, cryptography, user data exposure.
 4. **Plan Alignment**
    - For each plan step/acceptance criterion, mark **Met / Not Met / Changed**.
    - Ensure every deviation in `implementation.md` has a resolution; propose new beads if gaps remain.
-5. **QA Evidence**
+5. **Review Capsule (PR Generation)**
+   - Generate a summary block specifically designed to be pasted into a Pull Request or Merge Commit.
+   - Format:
+     ```markdown
+     ## Review Capsule
+     **Summary**: [One sentence explanation of change]
+     **Risk**: [Fast-Track / Elevated]
+     **Key Changes**:
+     - [Bullet points of major architectural changes]
+     **Security**: [Checked Auth/PII/Deps - Result]
+     **Test Evidence**: [Link to implementation.md table]
+     ```
+   - *Goal:* Reduce human burden by pre-writing the "paperwork".
+6. **QA Evidence**
    - Enumerate every canonical build/test command recorded in `implementation.md` (reuse the command labels defined there).
    - Rerun each canonical command yourself (or with the user’s approval when interactive) and log the outcome as Source `Reviewer Rerun`. If a rerun cannot be performed due to tool/infra outages, record the outage cause explicitly and treat the command as missing QA; if the command is simply not being run, record that as an omission rather than an outage.
    - Flag missing QA as a blocker and set the Decision to `No-Go` unless every canonical command has fresh reviewer evidence; when outages prevent reruns, recommend filing or updating a follow-up bead rather than silently skipping the affected commands.

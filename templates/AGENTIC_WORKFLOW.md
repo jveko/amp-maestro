@@ -39,16 +39,17 @@ graph TD
     Split --> Blocked[Parent Blocked]
     
     subgraph "4. Implementation"
-        Implement["/implement (Sub-agents)"]
+        Implement["/implement (Driver/Navigator)"]
         Verify{Tests Pass?}
     end
     
     subgraph "5. Review"
-        Review["/review"]
+        Review["/review (Capsule)"]
     end
     
     Approve -- Yes --> Implement
-    Implement --> Verify
+    Implement -- "Commit" --> Verify
+    Implement -- "Refine" --> Implement
     Verify -- No --> Implement
     Verify -- Yes --> Review
     
@@ -86,10 +87,12 @@ graph TD
 - **User**: Run `/spec bd-a1b2` (Optional but recommended).
   - **Agent**: Refines Bead into a formal `spec.md`.
 - **User**: Run `/research bd-a1b2`.
-  - **Agent**: Scans codebase (and KB), creates `.beads/artifacts/bd-a1b2/research.md`.
+  - **Agent**: Scans codebase and builds layered context (System, Domain, Task) in `.beads/artifacts/bd-a1b2/research.md`.
+  - **Context Engineering**: Explicitly hunts for existing patterns to prevent drift.
 
 ## 4. Planning (Start New Thread)
 - **User**: Run `/plan bd-a1b2`.
+  - **Agent**: Conducts **Architectural Interview** to verify approach against patterns.
   - **Agent (Oracle)**: reasoning -> `.beads/artifacts/bd-a1b2/plan.md`.
 - **Plan Artifact**: Every plan includes a `## Child Beads` appendix reserved for `/split`; the remainder stays read-only once approved. The Test Plan section defines all canonical build/test commands by label (for example `test:unit`, `lint:ci`); those labels are reused unchanged by `/implement`, `/review`, and `/land-plane`.
 - **Split Decision**: Agent analyzes complexity.
@@ -98,24 +101,28 @@ graph TD
 
 ## 5. Implementation (Start New Thread)
 - **User**: Run `/implement bd-a1b2`.
-  - **Agent (Manager)**: Spawns **Subagents** for each plan step.
-  - **Agent**: Updates status to `in_progress`.
-  - **Agent**: Creates `.beads/artifacts/bd-a1b2/implementation.md` if missing, copies the canonical build/test command labels from the plan’s Test Plan into a `## Build & Test Commands` table, and records actual runs, deviations, and decisions there (plan stays immutable once approved and no new canonical commands are invented at this stage).
-  - **Fallback**: If Task subagents are unavailable, the primary agent runs the loop directly but must preserve the same logging/test discipline.
-  - **Agent**: Verifies builds/tests so that every canonical command in the plan has a recent, passing run recorded in `implementation.md`; downstream `/review` and `/land-plane` refer only to these canonical command labels for QA evidence.
+  - **Agent (Manager)**: Runs the **Driver/Navigator Loop**.
+  - **Loop**: 
+    1. **Propose**: State intent and pattern match.
+    2. **Execute**: Run subagent/task.
+    3. **Pair Check**: Stop and ask user "Commit, Refine, or Revert?".
+  - **Agent**: Updates `implementation.md` with results and syncs docs if architecture changed.
+  - **Agent**: Verifies builds/tests so that every canonical command in the plan has a recent, passing run recorded in `implementation.md`.
 
 ## 6. Review (Start New Thread)
 - **Trigger**: Implementation passes local verification.
 - **User**: Run `/review bd-a1b2`.
-  - **Agent**: Audits the diff against `plan.md`/`spec.md` and the runtime log in `implementation.md`, classifies Fast-Track vs Elevated risk, and highlights any high-entropy files.
-  - **Agent**: Records findings, QA evidence keyed to the canonical command labels, and a PR-ready Review Capsule in `.beads/artifacts/<id>/review.md` (see `/review` command template for the exact structure). If canonical commands cannot be rerun due to tool/infra outages or are missing QA, the review marks them as missing, sets `Decision: No-Go`, and recommends follow-up beads instead of treating them as implicitly passing.
-- **Outcome**: Clear go/no-go signal plus documented deviations, risk rating, and test proof so downstream reviewers can move quickly, with outages or missing QA treated as hard blockers rather than soft warnings.
+  - **Agent**: Audits the diff against `plan.md`/`spec.md`.
+  - **Security Gate**: Runs mandatory dependency check (Anti-Slopsquatting) and input validation search.
+  - **Agent**: Generates a PR-ready **Review Capsule**.
+  - **Outcome**: Clear go/no-go signal plus documented deviations.
 
 ## 7. Land & Merge (Start New Thread)
 - **Prereq**: `/review` is complete (or explicitly skipped with rationale).
 - **User**: Run `/land-plane bd-a1b2`.
+  - **Agent**: Runs semantic pre-flight checklist (Migrations? Secrets? PII?).
   - **Agent**: Verifies review artifacts are approved before touching git.
-  - **Agent**: Runs final linters/tests by revalidating the same canonical commands recorded in `implementation.md`, files/updates beads, and syncs `bd`; any failing rerun halts landing, and if tests cannot be run at all due to tool/infra outages the landing is treated as having incomplete QA and must spin off or update beads instead of proceeding.
+  - **Agent**: Runs final linters/tests by revalidating the same canonical commands recorded in `implementation.md`, files/updates beads, and syncs `bd`.
   - **Agent**: Writes QA revalidation results into `.beads/artifacts/<id>/landing.md` so that `implementation.md` and `review.md` remain immutable after their stages complete.
   - **Agent**: For multiple active branchlets, land beads sequentially per the `/land-plane` command template.
   - **Agent**: Commits with `Refs <id>` and optionally pushes.
@@ -166,10 +173,10 @@ To ensure maximum reliability and avoid context window pollution:
 | `/context` | Setup | Load artifacts and summarize the bead’s current state. |
 | `/kb-build` *(optional)* | Setup | Refresh `.beads/kb/` when architecture knowledge is stale. |
 | `/spec` *(optional)* | Research | Produce `spec.md` for complex/ambiguous beads before planning. |
-| `/research` | Research | Gather references and codify them in `research.md`. |
-| `/plan` | Plan | Ask the Oracle for an actionable plan (`plan.md`). |
-| `/split` *(conditional)* | Plan | Break composite beads into atomic children. |
-| `/implement` | Work | Execute plan steps via the manager/worker loop and log execution details. |
-| `/review` | Quality | Verify implementation vs. plan/spec/logs, tag risk, log QA evidence, and emit a Review Capsule. |
-| `/land-plane` | Ship | Run quality gates, sync beads, commit/push, and tee up next work. |
-| `/bead-notes` *(optional)* | Context Hygiene | Append session summaries to bead notes for future agents. |
+| `/research` | Research | Gather code references, identify existing patterns, and write `research.md`. |
+| `/plan` | Plan | Interview user on architecture, then use Oracle to derive `plan.md`. |
+| `/split` *(conditional)* | Plan | Break composite work into child beads; keeps implementation beads atomic. |
+| `/implement` | Work | Run the Driver/Navigator loop: propose, execute, and verify each step with the user. |
+| `/review` | Quality | Verify implementation, check for slopsquatting/security risks, and generate a Review Capsule. |
+| `/land-plane` | Ship | Run semantic pre-flight checks, revalidate canonical commands, sync beads, and commit. |
+| `/bead-notes` *(optional)* | Context Hygiene | Append a concise session summary back to the bead’s notes for future agents. |

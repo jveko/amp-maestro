@@ -16,8 +16,14 @@ Confirm scope, capture remaining work, run required quality gates, sync beads, a
 <workflow>
 0. **Review Gate**
    - Confirm `.beads/artifacts/<id>/review.md` exists for every bead being landed.
-   - Verify each review artifact contains a `## Decision` block marked `Go` with approver + timestamp and a `## QA Evidence` table covering every canonical command from `implementation.md`. If any field is missing or marked `No-Go`, stop and redirect to `/review` or remediation before touching git.
-1. **Inventory**
+   - Verify each review artifact contains a `## Decision` block marked `Go` with approver + timestamp and a `## QA Evidence` table.
+1. **Semantic Pre-Flight Checklist**
+   - Before proceeding, ask the user to confirm "Yes" to these HARD gates:
+     - [ ] "Have database migrations been run/verified?"
+     - [ ] "Are all new secrets (if any) added to the prod vault?"
+     - [ ] "Is there any PII introduced that needs legal/compliance sign-off?"
+   - If any answer is "No", **STOP**. Do not land.
+2. **Inventory**
    - List active bead(s), files touched, and tests run (cite `implementation.md`); call out when multiple branchlets/worktrees are open.
    - Ask user to confirm or correct and decide whether to finish beads sequentially or exit early.
 2. **Per-Bead Verification**
