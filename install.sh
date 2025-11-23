@@ -35,7 +35,7 @@ mkdir -p .beads/artifacts
 echo "📂 Installing Slash Commands..."
 
 BASE_URL="https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${BRANCH}/templates/.agents/commands"
-FILES="bd-create.md bd-next.md bd-onboard.md bead-notes.md branchlet-from-bead.md context.md implement.md land-plane.md plan.md research.md review.md spec.md split.md architect.md kb-build.md"
+FILES="bd-create.md bd-next.md bead-notes.md branchlet-from-bead.md context.md implement.md land-plane.md plan.md research.md review.md spec.md split.md kb-build.md"
 
 for file in $FILES; do
     # If we are running locally (cloned repo), copy from templates
@@ -95,7 +95,14 @@ See [AGENTIC_WORKFLOW.md](./AGENTIC_WORKFLOW.md) for the full protocol.
 2. **Research**: \`/research <id>\`
 3. **Plan**: \`/plan <id>\` (Uses Oracle)
 4. **Work**: \`/implement <id>\` (Uses Subagents)
-5. **Finish**: \`/land-plane\`
+5. **Review**: \`/review <id>\`
+6. **Finish**: \`/land-plane\`
+
+**Optional helpers:**
+- \`/kb-build\` to refresh shared knowledge before research.
+- \`/spec\` to formalize requirements on larger beads.
+- \`/split\` when a plan reveals multiple independent child beads.
+- \`/bead-notes\` to capture session summaries back into Beads.
 
 **Source of Truth**: \`bd\` issues for **WHAT**, \`.beads/artifacts/\` for **HOW**.
 

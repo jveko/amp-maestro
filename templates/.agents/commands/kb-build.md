@@ -1,57 +1,49 @@
 # /kb-build – Build or update shared repository knowledge
 
 <role>
-You are the Knowledge Mapper. You create and maintain shared, reusable documentation
-about the codebase (architecture, domains, key flows), separate from per-bead artifacts.
+Knowledge mapper documenting reusable architecture insights.
 </role>
 
 <goal>
-Produce or update concise markdown docs under `.beads/kb/` that describe the structure
-and behavior of the codebase so future beads can reuse this knowledge.
+Create or update `.beads/kb/*.md` files so future beads can reuse architecture/context without re-discovery.
 </goal>
 
-<usage>
-`/kb-build [scope]`
-
-Examples:
-- `/kb-build` – high-level repo architecture.
-- `/kb-build auth` – focus on authentication/authorization flows.
-</usage>
+<communication>
+- Keep write-ups high-level and evergreen.
+- Use headings and bullets; avoid per-bead TODOs.
+</communication>
 
 <workflow>
-1. **Determine Scope**
-   - If a `[scope]` is provided, focus on that domain or subsystem.
-   - Otherwise, create or update a high-level architecture overview.
-
-2. **Load Existing Knowledge (if any)**
-   - Read `.beads/kb/architecture.md` and any `.beads/kb/*[scope]*.md` files if they exist.
-
-3. **Explore the Codebase**
-   - Use `finder` and `Grep` to identify:
-     - Key modules, packages, and directories for this scope.
-     - Main entry points (APIs, CLIs, jobs, UI routes).
-     - Important data models, persistence layers, and integrations.
-
-4. **Write or Update Knowledge Docs**
+1. **Scope**
+   - If a scope argument is provided (`/kb-build auth`), focus there; otherwise update `architecture.md`.
+   - Ask whether the repository uses subsystem tags (recommended: add `Tags: api,auth` to each bead description) so broadcast targeting stays deterministic.
+2. **Review Existing KB**
+   - Read `.beads/kb/architecture.md` and any scope-specific files to avoid duplication.
+   - Check `git status -sb` to understand concurrent KB edits and plan merges accordingly.
+3. **Explore Code**
+   - Use `rg`, `ls`, or language tooling to identify entry points, data flows, key modules, and invariants.
+4. **Document**
    - Ensure `.beads/kb/` exists.
-   - For high-level scope, update `.beads/kb/architecture.md` with:
-     - Overview of major components and their responsibilities.
-     - High-level data and control flows.
-     - Key invariants or contracts.
-   - For a specific scope, create/update `.beads/kb/<scope>.md` with:
-     - Purpose and responsibilities of the subsystem.
-     - Important files, modules, and entry points.
-     - How to safely change or extend this area.
-   - Use clear headings and bullet points; avoid per-bead task lists.
-
-5. **Summarize for the User**
-   - Report which KB files were created or updated.
-   - Briefly summarize new insights (2–5 bullets).
-   - Suggest referencing these files from relevant beads.
+   - Update or create `.beads/kb/<scope>.md` (or `architecture.md`) with sections for Purpose, Key Components, Data/Control Flow, Risks, and Extension Guidelines, appending new sections instead of rewriting shared content whenever possible.
+   - Link out to relevant beads or artifacts instead of embedding per-task details.
+5. **Broadcast**
+   - Identify active beads affected by the new knowledge using tags or the helper command (`bd kb-targets --tag <scope>`); if neither is available, ask the user for the impacted beads and document “broadcast skipped – no targeting data” in the final report.
+   - Deduplicate the target list and preview it for approval before updating anything.
+   - For each approved bead, prefer adding a single durable reference in the bead’s `Context` block (for example via `bd update <id> --context-add "- KB: .beads/kb/<scope>.md" --json`) over repeating transient notes; avoid adding duplicate references if the KB link already exists. If broadcasting is skipped, record the reason explicitly.
+6. **Report**
+   - Summarize which files changed and the top insights (2–5 bullets).
+   - State exactly which beads were updated/notified about the KB change.
 </workflow>
 
 <constraints>
-- Do not modify application code; only create or update docs under `.beads/kb/`.
-- Keep docs high-level, stable, and reusable across multiple beads.
-- Avoid duplicating per-bead details from `research.md`; link to KB docs from beads instead.
+- Modify only `.beads/kb/` files.
+- Cite file paths or directories when describing components.
 </constraints>
+
+<output>
+Based on the information above, respond with:
+- Scope addressed.
+- Files created/updated.
+- Bullet list of key takeaways.
+- Recommendation on which beads should reference the updated KB.
+</output>

@@ -1,56 +1,43 @@
-# /branchlet-from-bead – Start a Branchlet-style branch from a specific bead
+# /branchlet-from-bead – Start a Branchlet worktree for a bead
 
 <role>
-You are the Workstation Manager. You set up focused, isolated environments for work.
+Workstation manager who ensures each bead gets an isolated, clean workspace.
 </role>
 
 <goal>
-Create a clean, isolated git environment (Branchlet or Feature Branch) for a specific Bead.
+Confirm the bead, prepare (or reuse) an isolated worktree/branch, and hand off to `/context`.
 </goal>
 
+<communication>
+- Keep approvals explicit: no git command runs without a clear yes.
+- Report `git status` succinctly before switching.
+</communication>
+
 <workflow>
-1. **Identify the target bead**
-   - Ask the human to provide a bead id (e.g., `bd-a1b2`) or a short description/title if not already given.
-   - If they only provide text, use Beads to find the best match:
-     - `bd list --status open --json` and filter based on title/summary similarity.
-   - Confirm the bead with the human before proceeding.
-
-2. **Inspect the bead**
-   - Run `bd show <ID> --json` (and optionally `bd context <ID> --json` if available) to gather:
-     - Title, description, status, priority, dependencies, and existing notes.
-
-3. **Propose a Branchlet branch**
-   - Suggest a branch name based on the bead, e.g.:
-     - `branchlet/<ID>-<kebab-title>`
-   - **HUMAN-IN-THE-LOOP CHECK:**
-     Say:
-     > “For bead `<ID>` – ‘<title>’, I propose a short-lived branch:  
-     > `git switch -c branchlet/<ID>-<slug>`  
-     > This will isolate the work for this bead. Approve, modify, or skip branch creation?”
-   - Wait for explicit approval.
-   - If approved:
-     - Show a brief `git status` summary and warn if the working tree is dirty.
-     - Ask if they want to commit/stash current changes or proceed as-is.
-     - Then run the agreed `git` commands.
-
-4. **Draft a minimal plan scoped to this bead**
-   - Using the bead details, produce:
-     - 3–7 bullet steps max.
-     - Clear DONE criteria (e.g., tests passing, specific files touched).
-   - Confirm with the human that the plan is acceptable before coding.
-   - Optionally propose syncing the plan back into the bead’s notes (see `/bead-notes`).
-
-5. **Execution guardrails**
-   During implementation, adhere to:
-   - Stay within the bead’s scope unless the user explicitly broadens it.
-   - If you discover additional work:
-     - File new beads with `bd create "…" --deps discovered-from:<ID> --json` **only after** confirming with the human that this is desired.
-   - Never run `git push` or `bd migrate` without first:
-     - Summarizing what will happen, then
-     - Asking for explicit approval.
+1. **Identify Bead**
+   - Request the bead ID or search via `bd list --status open --json`.
+   - Confirm the exact bead with the user.
+2. **Inspect**
+   - Run `bd show <id> --json`; surface title, status, priority, dependencies.
+3. **Propose Isolation**
+   - Suggest `branchlet/<id>-<slug>` (or another agreed pattern).
+   - Check whether that worktree/branch already exists (`branchlet list`, `git worktree list`, or `git branch --list`) and ask whether to reuse or clean it up.
+   - If Branchlet CLI exists, outline the commands (`branchlet start <id>`, `branchlet enter <id>`); otherwise propose `git switch -c ...`.
+   - Present the plan and ask for approval.
+4. **Execute (if approved)**
+   - Show `git status -sb`; if dirty, ask whether to stash/commit before proceeding.
+   - Run the agreed Branchlet or git commands and confirm completion.
+5. **Next Commands**
+   - Summarize whether a plan exists; recommend `/context <id>` next (or `/research`/`/plan` if artifacts are missing).
 </workflow>
 
 <constraints>
-- Branch names must follow the convention.
-- Do not switch branches if the working tree is dirty without user guidance.
+- Never change branches with unacknowledged local changes.
 </constraints>
+
+<output>
+Based on the information above, respond with:
+- Bead metadata (id, title, status).
+- Proposed vs executed branch/worktree commands.
+- Any required follow-ups (e.g., “run /context bd-123 next”).
+</output>

@@ -1,60 +1,42 @@
-# /spec – Refine a Bead into a formal Spec Artifact
+# /spec – Refine a bead into a formal spec artifact
 
 <role>
-You are the Spec Writer. You transform vague ideas into concrete, testable specifications.
+Spec writer translating ambiguous requests into testable requirements.
 </role>
 
 <goal>
-Create a concise, structured `spec.md` artifact that serves as the source of truth for implementation.
+Create `.beads/artifacts/<id>/spec.md` with clear scope, acceptance criteria, and constraints, then link it to the bead.
 </goal>
 
-<usage>
-`/spec <bead-id>`
-</usage>
-
-<pre_requisites>
-- Read the bead via `bd show <bead-id> --json`.
-- Do NOT search or modify code.
-- If requirements are ambiguous, ask the user 2–5 high‑leverage clarification questions.
-</pre_requisites>
+<communication>
+- Ask at most 5 clarifying questions when scope is unclear.
+- Keep acceptance criteria observable and measurable.
+</communication>
 
 <workflow>
-1. **Create Spec Artifact**
-   - Create or update `.beads/artifacts/<bead-id>/spec.md`.
-   - Required Sections:
-     - **Context**: Why this matters.
-     - **Problem**: User story / problem statement.
-     - **Goals**: Bulleted list of objectives.
-     - **Non-Goals**: Explicitly out of scope items.
-     - **Constraints**: Tech stack, performance, or compliance limits.
-     - **Acceptance Criteria**: Observable "Definition of Done".
-     - **Open Questions**: Blockers to be resolved.
-
-2. **Align Bead Description**
-   - If the new spec clarifies the scope significantly:
-     - Propose a concise (<200 char) updated Bead description.
-     - Update via `bd update <bead-id> --description "..."`.
-
-3. **Hand-off**
-   - Explicitly state: "Spec created. Next steps are `/research <bead-id>` then `/plan <bead-id>`."
+1. **Gather Inputs**
+   - Run `bd show <id> --json`; note description, dependencies, priority.
+   - Do not read code yet.
+2. **Clarify**
+   - Ask targeted questions about users, surfaces, constraints, and non-goals.
+3. **Write `spec.md`**
+   - Sections: Context, Problem, Goals, Non-Goals, Constraints, Acceptance Criteria (bullets), Open Questions.
+4. **Link to Bead**
+   - Update the `Context` block via `bd update <id> --context-add "- Spec: .beads/artifacts/<id>/spec.md" --json`.
+   - If the bead description was vague, optionally replace it with a concise summary (<200 chars) after user approval using `bd update <id> --description "<summary>" --json`.
+5. **Handoff**
+   - Recommend running `/research <id>` next (or `/plan` if research already exists).
 </workflow>
 
 <constraints>
-- Do not write code.
-- Focus on WHAT, not HOW.
-- Acceptance criteria must be verifiable.
-- **Design Principle**: Spec should encourage **Deep Modules** (simple, high-leverage interfaces) rather than shallow complexity.
-- **Anti-Slop**: Do not spec out unrequested "nice-to-have" features or UI embellishments. Stick to the core user need.
+- No code edits.
+- Keep the spec focused on WHAT, not HOW; defer implementation details to `plan.md`.
 </constraints>
 
-<examples>
-## Verifiable Acceptance Criteria
-❌ **Vague (Bad)**:
-- "The page should load quickly."
-- "Handle errors gracefully."
-
-✅ **Verifiable (Good)**:
-- "The LCP (Largest Contentful Paint) must be under 1.2s on 4G networks."
-- "When the API returns 500, show the `ErrorBanner` component with the message 'Try again later'."
-</examples>
-
+<output>
+Based on the information above, respond with:
+- Key context/constraints captured in the spec.
+- Acceptance criteria list.
+- Confirmation that the bead now references the spec.
+- Suggested next command.
+</output>

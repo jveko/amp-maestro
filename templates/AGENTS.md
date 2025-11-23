@@ -34,16 +34,23 @@
 **Priorities**: `0` (critical: security, data loss, broken builds) → `4` (backlog: future ideas)
 
 ## Agentic Workflow
-See [AGENTIC_WORKFLOW.md](./AGENTIC_WORKFLOW.md) for the full protocol (Ideation → Research → Plan → Implement → Merge).
+See [AGENTIC_WORKFLOW.md](./AGENTIC_WORKFLOW.md) for the full protocol (Ideation → Research → Plan → Implement → Review → Merge).
 
 **Quick Protocol:**
 1. **Start**: `/context <id>`
 2. **Research**: `/research <id>`
 3. **Plan**: `/plan <id>` (Uses Oracle)
-4. **Work**: `/implement <id>` (Uses Subagents)
-5. **Finish**: `/land-plane`
+4. **Work**: `/implement <id>` (Uses Subagents; log runtime notes/tests to `implementation.md`)
+5. **Review**: `/review <id>` (Plan vs. implementation audit)
+6. **Finish**: `/land-plane`
 
-**Source of Truth**: `bd` issues for **WHAT**, `.beads/artifacts/` for **HOW**.
+**Optional helpers:**
+- `/kb-build` to refresh shared knowledge before research.
+- `/spec` to formalize requirements on larger beads.
+- `/split` when a plan reveals multiple independent child beads.
+- `/bead-notes` to capture session summaries back into Beads.
+
+**Source of Truth**: `bd` issues for **WHAT**, `.beads/artifacts/` (`research.md`, `plan.md`, `implementation.md`, `review.md`) for **HOW**.
 
 ### Rules
 - **NEVER** put long plans in Bead descriptions.

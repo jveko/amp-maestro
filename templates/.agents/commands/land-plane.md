@@ -1,99 +1,62 @@
-# /land-plane – Cleanly land the session using Beads + Branchlet conventions
+# /land-plane – Cleanly wrap up the session
 
 <role>
-You are the Landing Officer. You ensure work is safely saved, synced, and ready for the next session.
+Landing officer ensuring beads, git, and QA are in sync before ending work.
 </role>
 
 <goal>
-Leave the workspace in a clean state: Beads synced, git clean, and next steps defined.
+Confirm scope, capture remaining work, run required quality gates, sync beads, and leave clear next steps.
 </goal>
 
+<communication>
+- Keep inventories concise; align them to `implementation.md`.
+- Request approval before every destructive or state-changing command.
+</communication>
+
 <workflow>
-1. **Inventory current work**
-   - Summarize:
-     - Which bead(s) you’ve been working on.
-     - What changes you’ve made (code, config, tests, docs).
-   - Ask the human to confirm or correct this list.
-
-2. **Verify Implementation (Code Review)**
-   - Load `.beads/artifacts/<bead-id>/spec.md` and `plan.md` (if available).
-   - **Compare**: Does the implementation (`git diff`) match the Plan and Spec?
-   - **Quality Check**:
-     - Are acceptance criteria met?
-     - Any deviations? (Scope creep or missing features?)
-   - If `review.md` does not exist or is stale, **Summary** the findings here.
-   - If significant issues are found, **STOP** and ask to fix them before landing.
-
-3. **File beads for remaining work (if any)**
-   - For any discovered-but-not-tracked work:
-     - Propose `bd create "…" -t task|bug -p <priority> --deps discovered-from:<parent-id> --json`.
-   - **HUMAN-IN-THE-LOOP CHECK:**
-     - Show each proposed new bead (title, type, priority, parent) and ask for approval before creating it.
-
-3. **File beads for remaining work (if any)**
-   - For any discovered-but-not-tracked work:
-     - Propose `bd create "…" -t task|bug -p <priority> --deps discovered-from:<parent-id> --json`.
-   - **HUMAN-IN-THE-LOOP CHECK:**
-     - Show each proposed new bead (title, type, priority, parent) and ask for approval before creating it.
-
-4. **Update and/or close beads for work done**
-   - For the bead(s) you’ve worked on:
-     - Propose appropriate status changes, e.g.:
-       - `bd update <ID> --status blocked|in_progress|open --json`
-       - `bd close <ID> --reason "Implemented and verified" --json`
-   - Again, ask the human to approve each change before executing it.
-
-5. **Run quality gates (tests/linters) if code changed**
-   - If you’ve made code changes, propose a short list of relevant commands, e.g.:
-     - `go test ./...` or project-specific test commands.
-     - Lint/format commands.
-   - **HUMAN-IN-THE-LOOP CHECK:**
-     Say:
-     > “I propose to run these checks before we finish:  
-     > - …  
-     > Approve / modify / skip?”
-   - Only run the commands the human approves.
-   - If any tests or linters fail:
-     - Summarize failures.
-     - Decide together whether to file new beads (with `bd create …`) or fix immediately.
-
-6. **Sync Beads carefully**
-   - Propose running `bd sync` to flush/export/commit/pull/import/push the issue database.
-   - Explain what it does in this context.
-   - **HUMAN-IN-THE-LOOP CHECK:**
-     > “I propose to run `bd sync` now to ensure all beads are safely synced via git. Approve / decline?”
-   - Only if approved:
-     - Run `bd sync`.
-     - If there are any conflicts or errors (especially around `.beads/` files), explain them clearly and ask how they’d like to resolve them.
-
-7. **Git Hygiene & Conventional Commits**
-   - Show a succinct `git status` summary.
-   - **Commit Message Rules**:
-     - Format: `<type>: <subject>` (e.g., `feat: add user login`, `fix: resolve race condition`).
-     - Types: `feat`, `fix`, `chore`, `refactor`, `docs`, `test`, `perf`.
-     - Body: Must include `Refs <bead-id>` or `Fixes <bead-id>`.
-   - **HUMAN-IN-THE-LOOP**: "I propose commit message: '...'. Approve?"
-   - If approved, commit.
-   - **HUMAN-IN-THE-LOOP**: "Push to remote? (git push)"
-   - If approved, push.
-
-8. **Suggest the next bead / next prompt**
-   - Use `bd ready --json` and/or `bd stats` to suggest:
-     - A specific bead id + title as the next task.
-     - A short “next session prompt” the human can paste into Amp later, e.g.:
-       > “Continue work on `<ID>` – ‘<title>’.  
-       > Context: <1–3 sentences of what’s been done and what’s next>.”
-
-9. **Final recap**
-   - Provide a brief recap:
-     - Which beads were created / updated / closed.
-     - Which tests/quality gates ran and their status.
-     - Whether `bd sync` and git push were performed.
-   - Stop after this recap unless the human asks for more.
+0. **Review Gate**
+   - Confirm `.beads/artifacts/<id>/review.md` exists for every bead being landed.
+   - Verify each review artifact contains a `## Decision` block marked `Go` with approver + timestamp and a `## QA Evidence` table covering every canonical command from `implementation.md`. If any field is missing or marked `No-Go`, stop and redirect to `/review` or remediation before touching git.
+1. **Inventory**
+   - List active bead(s), files touched, and tests run (cite `implementation.md`); call out when multiple branchlets/worktrees are open.
+   - Ask user to confirm or correct and decide whether to finish beads sequentially or exit early.
+2. **Per-Bead Verification**
+   - For each bead in the inventory: follow the exit checklist directly inside this command—
+     1. `branchlet enter <id>` (or `git worktree` switch) and show `git status -sb`.
+     2. Compare `git diff` to `plan.md`/`spec.md` and `implementation.md` deviations; queue new beads for any unresolved scope.
+     3. Rerun every canonical build/test command before committing (details in step 5).
+     4. Confirm `review.md` still shows `Decision: Go` with all required follow-ups resolved.
+     5. Commit with `Refs <id>` and push if requested.
+     6. Run `branchlet delete <id>` (or remove the worktree) once the bead lands.
+   - When multiple worktrees are active, complete the checklist bead-by-bead before moving on.
+3. **Track Remaining Work**
+   - Propose new beads for uncovered issues (`bd create ... --deps discovered-from:<id>`); seek approval before creating.
+4. **Update Bead Status**
+   - Preview the exact `bd update <id> --status ready_for_review|in_progress|closed --json` commands for each bead; run only after approval and log outcomes.
+5. **Quality Gates**
+   - Ensure `.beads/artifacts/<id>/landing.md` exists with sections `## QA Revalidation` and `## Notes`; if missing, create it and link it via `bd update <id> --context-add "- Landing: .beads/artifacts/<id>/landing.md" --json`.
+   - Enumerate the canonical build/test commands from `implementation.md` (reference them by the command labels written there); request approval to rerun each.
+   - Execute approved commands, capture pass/fail output, and log results **only** in `landing.md` (table keyed by command label with columns `Command | Source Landing | Result | Notes`) plus a short summary in the command response—do **not** edit `implementation.md` or `review.md` during landing so prior artifacts stay immutable.
+   - If any rerun fails, halt landing, report the failure, and decide whether to fix immediately or file a new bead—never continue to commits/pushes with failing QA. If canonical commands cannot be run at all due to tool/infra outages, record the outage explicitly in `landing.md`, treat QA as incomplete, and recommend creating or updating a bead to track remediation rather than proceeding as if tests had passed.
+6. **Sync Beads**
+   - Explain what `bd sync` will do (per bead if necessary) and request approval before running.
+7. **Git Hygiene**
+   - Show `git status -sb` for the current worktree and any additional branchlets still open.
+   - Propose commit message(s) (Conventional Commit + `Refs <id>`). After approval, commit and optionally push.
+8. **Next Steps**
+   - Suggest the next bead or slash command, referencing review capsules and unresolved follow-ups.
+9. **Recap**
+   - Report: beads updated, tests executed (with pass/fail state), `bd sync` result, git status/push outcome, and pending follow-ups per bead.
 </workflow>
 
 <constraints>
-- Ensure no work is lost.
-- Validate all changes before committing.
-- Sync beads to prevent drift.
+- Never run commands that alter state (tests, sync, git, bd) without consent.
 </constraints>
+
+<output>
+Based on the information above, respond with:
+- Confirmed inventory.
+- Approved/declined commands (tests, bd updates, git, sync).
+- Summary of commits/tests performed.
+- Next recommended command or bead.
+</output>

@@ -1,48 +1,41 @@
 # /bead-notes – Sync this thread’s context back into Beads
 
 <role>
-You are the Scribe. You capture the essence of the conversation and persist it into the Beads system.
+Session scribe who captures decisions, evidence, and follow-ups for the relevant bead(s).
 </role>
 
 <goal>
-Summarize the current session and update the relevant Bead's notes to preserve context for future agents.
+Produce an approved summary and write it to each bead’s notes.
 </goal>
 
+<communication>
+- Keep summaries tight: bullets or short paragraphs focusing on decisions, trade-offs, tests, and TODOs.
+- Always preview the note before committing it.
+</communication>
+
 <workflow>
-1. **Identify the relevant bead(s)**
-   - Ask the human to provide the relevant bead id(s) (e.g., `bd-a1b2`) or ask them to select from a list.
-   - If they don’t know, suggest candidates based on recently active beads:
-     - `bd list --status in_progress --json`
-
-2. **Summarize this session**
-   - From this conversation, produce a *compact* summary focused on:
-     - Key decisions made.
-     - Design choices & trade-offs.
-     - Known limitations, TODOs, and follow-up ideas.
-     - Any test results or performance findings.
-   - Aim for a few paragraphs or bullet list.
-
-3. **HUMAN-IN-THE-LOOP CHECK before writing**
-   - Show the proposed note text to the human first and ask:
-     > “Here is the note I propose to store on bead(s) `<IDs>`:  
-     > …  
-     > Approve / edit / cancel?”
-   - Incorporate any edits they request.
-
-4. **Write notes into Beads**
-   For each selected bead `<ID>`:
-   - Use an appropriate Beads command. Since we want to *append* notes, we typically use:
-     - `bd update <ID> --notes "..." --json`
-     - (Note: If the `bd` CLI in this repo supports a dedicated `note add` command, use that instead. Otherwise, fetch the existing notes, append the new summary with a date header, and update the field.)
-
-5. **Confirm & recap**
-   - After updates, briefly summarize:
-     - Which beads were updated.
-     - A one-line gist of what was recorded for each.
-   - If any command fails, show the error and ask the human how to proceed rather than retrying blindly.
+1. **Identify Targets**
+   - Ask for bead IDs; if unknown, suggest candidates via `bd list --status in_progress --json`.
+2. **Draft Summary**
+   - Capture decisions, design trade-offs, known gaps, test/QA results, and next steps.
+   - Include date + author context when useful.
+3. **Preview**
+   - Present the proposed note text and ask “Approve / edit / cancel?”
+4. **Persist**
+   - For each bead, append using `bd update <id> --notes "..." --json`.
+5. **Recap**
+   - Confirm which beads were updated and highlight the gist of each note.
 </workflow>
 
 <constraints>
-- Summaries must be concise but comprehensive.
-- Always confirm note content with the user.
+- Do not store unapproved text.
+- Keep each note self-contained (no references to “the chat above”).
 </constraints>
+
+<output>
+Based on the information above, respond with:
+- Target bead list.
+- The preview text (or confirmation that it was already approved and saved).
+- Result of each `bd update`.
+- Suggested next slash command (usually `/context` or `/plan`).
+</output>
