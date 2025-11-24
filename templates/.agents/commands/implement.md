@@ -57,6 +57,7 @@ Complete each step in `plan.md`, log execution details in `implementation.md`, a
    - For stalled steps (>3 attempts), recommend revisiting `/plan` or `/split`.
    - Remove debug code, TODOs, and ensure every canonical command from the plan has a recorded, recent run; highlight gaps explicitly in `implementation.md`.
 4. **Completion**
+   - **Documentation Check**: Ask "Did we change the architecture?" -> If yes, suggest running `/kb-build` after this command.
    - When all plan steps are done and every canonical command shows a passing, timestamped run, preview `bd update <id> --status ready_for_review --json`, run it after confirmation, and note the change in `implementation.md`.
    - Suggest `/review <id>` next (or `/land-plane` if review already complete).
 </workflow>

@@ -23,6 +23,10 @@ Produce `.beads/artifacts/<id>/research.md` with cited findings and link it in t
 2. **Prep Artifact Directory**
    - Ensure `.beads/artifacts/<id>/` exists; read existing `research.md` if present.
 3. **Gather Context (Context Engineering)**
+   - **Knowledge Base Check**:
+     - Check if `.beads/kb/` exists and contains `architecture.md` or relevant scope files.
+     - If missing, **STOP** and prompt: "Knowledge Base (`.beads/kb/`) is missing. Architecture research requires shared context. Run `/kb-build` first?"
+     - If the user declines, proceed but explicitly note "Risk: Missing Tribal Knowledge" in `research.md`.
    - **System Context**: Review `spec.md` and `ARCHITECTURE.md` (if present). Understand the high-level design.
    - **Domain Context (Pattern Hunt)**: Explicitly search for existing patterns.
      - *Example:* "How do we handle Auth?" -> Find `auth-middleware.ts`.
