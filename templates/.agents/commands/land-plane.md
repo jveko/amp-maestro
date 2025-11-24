@@ -44,7 +44,7 @@ Confirm scope, capture remaining work, run required quality gates, sync beads, a
 4. **Update Bead Status**
    - Preview the exact `bd update <id> --status ready_for_review|in_progress|closed --json` commands for each bead; run only after approval and log outcomes.
 5. **Quality Gates**
-   - Ensure `.beads/artifacts/<id>/landing.md` exists with sections `## QA Revalidation` and `## Notes`; if missing, create it and link it via `bd update <id> --context-add "- Landing: .beads/artifacts/<id>/landing.md" --json`.
+   - Ensure `.beads/artifacts/<id>/landing.md` exists with sections `## QA Revalidation` and `## Notes`; if missing, create it.
    - Enumerate the canonical build/test commands from `implementation.md` (reference them by the command labels written there); request approval to rerun each.
    - Execute approved commands, capture pass/fail output, and log results **only** in `landing.md` (table keyed by command label with columns `Command | Source Landing | Result | Notes`) plus a short summary in the command response—do **not** edit `implementation.md` or `review.md` during landing so prior artifacts stay immutable.
    - If any rerun fails, halt landing, report the failure, and decide whether to fix immediately or file a new bead—never continue to commits/pushes with failing QA. If canonical commands cannot be run at all due to tool/infra outages, record the outage explicitly in `landing.md`, treat QA as incomplete, and recommend creating or updating a bead to track remediation rather than proceeding as if tests had passed.

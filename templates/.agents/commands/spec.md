@@ -26,8 +26,8 @@ Create `.beads/artifacts/<id>/spec.md` with clear scope, acceptance criteria, an
    - Ask targeted questions about users, surfaces, constraints, and non-goals.
 3. **Write `spec.md`**
    - Sections: Context, Problem, Goals, Non-Goals, Constraints, Acceptance Criteria (bullets), Open Questions.
-4. **Link to Bead**
-   - Update the `Context` block via `bd update <id> --context-add "- Spec: .beads/artifacts/<id>/spec.md" --json`.
+4. **Verify Artifact Location**
+   - Ensure the file is saved at `.beads/artifacts/<id>/spec.md` so `/context` can find it automatically.
    - If the bead description was vague, optionally replace it with a concise summary (<200 chars) after user approval using `bd update <id> --description "<summary>" --json`.
 5. **Handoff**
    - Recommend running `/research <id>` next (or `/plan` if research already exists).

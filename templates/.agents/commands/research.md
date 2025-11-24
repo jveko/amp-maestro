@@ -31,7 +31,7 @@ Produce `.beads/artifacts/<id>/research.md` with cited findings and link it in t
    - **Data Context**:
      - Identify data models/schemas involved.
      - Check for "Data Gravity": Will changing this require a heavy migration?
-   - **Task Context**: Explore code (`rg`, `ls`) relevant to *this specific bead*.
+   - **Task Context**: Explore code relevant to *this specific bead*.
 4. **Write `research.md`**
    - Structure as a **Context Layer**:
      - **Domain Patterns**: "We use `zod` for validation and `react-query` for fetching."
@@ -39,8 +39,8 @@ Produce `.beads/artifacts/<id>/research.md` with cited findings and link it in t
      - **Task Knowledge**: "The user wants to add feature X to file Y."
    - Key References (cited).
    - Open Questions.
-5. **Link to Bead**
-   - Run `bd update <id> --context-add "- Research: .beads/artifacts/<id>/research.md" --json`.
+5. **Verify Artifact Location**
+   - Ensure the file is saved at `.beads/artifacts/<id>/research.md` so `/context` can find it automatically.
 6. **Handoff**
    - Summarize major findings and recommend running `/plan <id>` (or `/spec` if still ambiguous).
 </workflow>

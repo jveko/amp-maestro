@@ -74,7 +74,7 @@ Assess the diff, classify risk, document deviations/tests in `review.md`, and pr
      7. `## Risk & QA` table
      8. `## Review Capsule`
    - If any canonical command lacks QA evidence, mark the decision as `No-Go` and list the missing command IDs explicitly.
-   - Update the bead’s `Context` block via `bd update <id> --context-add "- Review: .beads/artifacts/<id>/review.md" --json`.
+   - Ensure the review is saved to `.beads/artifacts/<id>/review.md` so `/context` can find it.
 7. **Next Actions**
    - If Elevated, specify required fixes before `/land-plane`.
    - Otherwise, recommend `/land-plane <id>`.

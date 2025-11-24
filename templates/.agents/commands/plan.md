@@ -47,7 +47,7 @@ Produce `.beads/artifacts/<id>/plan.md` with clear steps, risks, and tests, then
    - Confirm the Test Plan section clearly labels each canonical command; these labels become the IDs reused in `implementation.md`, `review.md`, and `/land-plane`.
    - Treat the file as immutable after approval, except for `/split` edits inside `## Child Beads` or `## Parent Closure Checklist`; other deviations must live in `implementation.md`.
 4. **Link & Status**
-   - Update the bead context via `bd update <id> --context-add "- Plan: .beads/artifacts/<id>/plan.md" --json`.
+   - Ensure the plan is saved to `.beads/artifacts/<id>/plan.md` so `/context` can find it.
    - Set status to `in_progress` only after the plan is approved for execution using `bd update <id> --status in_progress --json`.
 5. **Atomic vs Composite**
    - Evaluate number of steps, files, and domains touched.
