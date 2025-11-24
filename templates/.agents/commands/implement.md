@@ -11,6 +11,7 @@ Complete each step in `plan.md`, log execution details in `implementation.md`, a
 <constraints>
 - Do not modify `plan.md`; deviations must live in `implementation.md`.
 - Avoid redundant subagents that only restate existing summaries; use the manual loop guidance above if tooling is constrained.
+- Leverage parallel subagents (multiple Task tool calls) for independent work within a single plan step.
 - If build/test commands are undefined, stop and request an updated `plan.md` instead of inventing them.
 </constraints>
 
@@ -32,7 +33,8 @@ Complete each step in `plan.md`, log execution details in `implementation.md`, a
         - **Context Check**: Identify the established pattern (from `research.md` or existing code) you will mimic.
         - State explicitly: "Based on **[Plan/Pattern]**, I am about to edit `X` to achieve `Y`. I will use library `Z` to match our existing style."
      2. **Execute**: 
-        - Spawn a subagent (Task tool) to apply the edit and run local verification (lint/test).
+        - Spawn one or more subagents (Task tool) in parallel if the step involves independent changes (e.g. multiple files); otherwise use a single subagent.
+        - Ensure each subagent runs local verification (lint/test) for its specific changes.
         - **Docs-Sync Rule**: If this step changes architecture, patterns, or public APIs, the subagent **MUST** update the relevant documentation (or `research.md` notes) in the *same commit*.
      3. **Stop & Verify (The "Pair Check")**:
         - Present the `git diff --stat` and the test result.
