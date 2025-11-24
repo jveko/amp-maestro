@@ -36,7 +36,7 @@ Confirm scope, capture remaining work, run required quality gates, sync beads, a
      2. Compare `git diff` to `plan.md`/`spec.md` and `implementation.md` deviations; queue new beads for any unresolved scope.
      3. Rerun every canonical build/test command before committing (details in step 5).
      4. Confirm `review.md` still shows `Decision: Go` with all required follow-ups resolved.
-     5. Commit with `Refs <id>` and push if requested.
+     5. Stage bead artifacts (`.beads/artifacts/<id>/`) and code. Commit with `Refs <id>` (do NOT use `--no-verify`) and push if requested.
      6. Run `branchlet delete <id>` (or remove the worktree) once the bead lands.
    - When multiple worktrees are active, complete the checklist bead-by-bead before moving on.
 3. **Track Remaining Work**
@@ -55,7 +55,7 @@ Confirm scope, capture remaining work, run required quality gates, sync beads, a
    - Explain what `bd sync` will do (per bead if necessary) and request approval before running.
 8. **Git Hygiene**
    - Show `git status -sb` for the current worktree and any additional branchlets still open.
-   - Propose commit message(s) (Conventional Commit + `Refs <id>`). After approval, commit and optionally push.
+   - Propose commit message(s) (Conventional Commit + `Refs <id>`). After approval, stage artifacts, commit (do NOT use `--no-verify`) and optionally push.
 9. **Next Steps**
    - Suggest the next bead or slash command, referencing review capsules and unresolved follow-ups.
 10. **Recap**

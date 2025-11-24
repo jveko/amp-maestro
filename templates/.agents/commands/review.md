@@ -42,7 +42,9 @@ Assess the diff, classify risk, document deviations/tests in `review.md`, and pr
      - **Deep vs Shallow**: Flag any "Shallow Modules" (classes/functions with complex interfaces but little functionality).
      - **ETC (Easier To Change)**: Is this code "Easier To Change"? Flag hardcoded assumptions or tight coupling.
      - **Comments**: Do comments explain *why* (intent) or just repeat *what* the code does?
-   - Explicitly review for security impact: auth/authz flows, secrets handling, cryptography, user data exposure.
+     - **Testing Practices**: Do tests actually verify behavior (vs just coverage padding)? Are they deterministic? Do they test edge cases?
+     - **Missing Tests**: If new logic was added, are there corresponding tests? If not, is there a valid justification?
+     - Explicitly review for security impact: auth/authz flows, secrets handling, cryptography, user data exposure.
 4. **Plan Alignment**
    - For each plan step/acceptance criterion, mark **Met / Not Met / Changed**.
    - Ensure every deviation in `implementation.md` has a resolution; propose new beads if gaps remain.
@@ -74,6 +76,7 @@ Assess the diff, classify risk, document deviations/tests in `review.md`, and pr
      7. `## Risk & QA` table
      8. `## Review Capsule`
    - If any canonical command lacks QA evidence, mark the decision as `No-Go` and list the missing command IDs explicitly.
+   - If new logic was added but no tests were found (and no justification provided), mark the decision as `No-Go`.
    - Ensure the review is saved to `.beads/artifacts/<id>/review.md` so `/context` can find it.
 7. **Next Actions**
    - If Elevated, specify required fixes before `/land-plane`.

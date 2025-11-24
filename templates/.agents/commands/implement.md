@@ -35,6 +35,7 @@ Complete each step in `plan.md`, log execution details in `implementation.md`, a
      2. **Execute**: 
         - Spawn one or more subagents (Task tool) in parallel if the step involves independent changes (e.g. multiple files); otherwise use a single subagent.
         - Ensure each subagent runs local verification (lint/test) for its specific changes.
+        - If this step adds new logic, write corresponding tests (unit/integration) *before* or *alongside* the implementation (Red-Green-Refactor is encouraged).
         - **Docs-Sync Rule**: If this step changes architecture, patterns, or public APIs, the subagent **MUST** update the relevant documentation (or `research.md` notes) in the *same commit*.
      3. **Stop & Verify (The "Pair Check")**:
         - Present the `git diff --stat` and the test result.
