@@ -27,10 +27,10 @@ Provide a short, data-informed shortlist and agree on the next bead plus setup p
    - For each candidate, share `id | title | priority | status | deps`, listing resumable `in_progress` beads first.
    - End with: “Which bead should we pick? Reply with the number or specify another ID.”
 3. **Confirm Isolation Strategy**
-   - After the bead is chosen—and with explicit approval—run read-only commands such as `branchlet list`, `git worktree list`, or `git status -sb` to detect existing workspaces; report any matches for that bead before proposing new ones.
-   - Ask whether to enter an existing Branchlet, start a new one via `/branchlet-from-bead <id>`, or remain on the current branch, and remind them that no mutating git commands will be run inside `/bd-next`.
+   - After the bead is chosen—and with explicit approval—run read-only commands such as `wtp list`, `git worktree list`, or `git status -sb` to detect existing workspaces; report any matches for that bead before proposing new ones.
+   - Ask whether to enter an existing worktree via `wtp cd`, start a new one via `/wtp-from-bead <id>`, or remain on the current branch, and remind them that no mutating git commands will be run inside `/bd-next`.
 4. **Hand Off**
-   - Direct them to the next slash command (`/branchlet-from-bead`, `/context`, or `/research` depending on setup).
+   - Direct them to the next slash command (`/wtp-from-bead`, `/context`, or `/research` depending on setup).
    - Remind them to open a fresh Amp thread for that command.
 </workflow>
 

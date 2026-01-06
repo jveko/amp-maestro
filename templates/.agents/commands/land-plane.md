@@ -28,16 +28,16 @@ Confirm scope, capture remaining work, run required quality gates, sync beads, a
      - [ ] "Is there any PII introduced that needs legal/compliance sign-off?"
    - If any answer is "No", **STOP**. Do not land.
 2. **Inventory**
-   - List active bead(s), files touched, and tests run (cite `implementation.md`); call out when multiple branchlets/worktrees are open.
+   - List active bead(s), files touched, and tests run (cite `implementation.md`); call out when multiple worktrees are open.
    - Ask user to confirm or correct and decide whether to finish beads sequentially or exit early.
 2. **Per-Bead Verification**
    - For each bead in the inventory: follow the exit checklist directly inside this command—
-     1. `branchlet enter <id>` (or `git worktree` switch) and show `git status -sb`.
+     1. `wtp cd <branch>` (or `git worktree` switch) and show `git status -sb`.
      2. Compare `git diff` to `plan.md`/`spec.md` and `implementation.md` deviations; queue new beads for any unresolved scope.
      3. Rerun every canonical build/test command before committing (details in step 5).
      4. Confirm `review.md` still shows `Decision: Go` with all required follow-ups resolved.
      5. Stage bead artifacts (`.beads/artifacts/<id>/`) and code. Commit with `Refs <id>` (do NOT use `--no-verify`) and push if requested.
-     6. Run `branchlet delete <id>` (or remove the worktree) once the bead lands.
+     6. Run `wtp remove <branch>` (or `wtp remove --with-branch <branch>` to also delete branch) once the bead lands.
    - When multiple worktrees are active, complete the checklist bead-by-bead before moving on.
 3. **Track Remaining Work**
    - Propose new beads for uncovered issues (`bd create ... --deps discovered-from:<id>`); seek approval before creating.
@@ -54,7 +54,7 @@ Confirm scope, capture remaining work, run required quality gates, sync beads, a
 7. **Sync Beads**
    - Explain what `bd sync` will do (per bead if necessary) and request approval before running.
 8. **Git Hygiene**
-   - Show `git status -sb` for the current worktree and any additional branchlets still open.
+   - Show `git status -sb` for the current worktree and any additional worktrees still open.
    - Propose commit message(s) (Conventional Commit + `Refs <id>`). After approval, stage artifacts, commit (do NOT use `--no-verify`) and optionally push.
 9. **Next Steps**
    - Suggest the next bead or slash command, referencing review capsules and unresolved follow-ups.

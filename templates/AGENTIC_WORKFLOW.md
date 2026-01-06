@@ -1,6 +1,6 @@
 # Agentic Workflow Protocol
 
-This protocol defines the mandatory workflow for AI agents (Amp) working in this repository. It integrates **Beads** (Issue Tracking), **Branchlet** (Worktrees), and **Slash Commands** (HumanLayer Protocol).
+This protocol defines the mandatory workflow for AI agents (Amp) working in this repository. It integrates **Beads** (Issue Tracking), **wtp** (Worktrees), and **Slash Commands** (HumanLayer Protocol).
 
 ```mermaid
 graph TD
@@ -19,7 +19,7 @@ graph TD
     
     subgraph "2. Setup & Context"
         PickWork["/bd-next or Pick from Backlog"]
-        Worktree["/branchlet-from-bead"]
+        Worktree["/wtp-from-bead"]
         Context["/context (Load Artifacts)"]
         Knowledge["/kb-build (Optional)"]
     end
@@ -58,7 +58,7 @@ graph TD
     subgraph "6. Land & Merge"
         Land["/land-plane"]
         Merge[Merge PR]
-        Cleanup["branchlet delete"]
+        Cleanup["wtp remove"]
     end
     Review --> Land
     Land --> Merge
@@ -79,7 +79,7 @@ graph TD
 ## 2. Setup & Context
 - **User**: Run `/bd-next` to pick a task.
 - **Agent**: Proposes top candidates. User selects `bd-a1b2`.
-- **User**: Run `/branchlet-from-bead bd-a1b2` (Recommended) or switch branch.
+- **User**: Run `/wtp-from-bead bd-a1b2` (Recommended) or switch branch.
 - **User**: Run `/context bd-a1b2`.
   - **Agent**: Loads existing artifacts and summarizes state.
 - **User (Optional)**: Run `/kb-build`.
@@ -127,10 +127,10 @@ graph TD
   - **Agent**: Verifies review artifacts are approved before touching git.
   - **Agent**: Runs final linters/tests by revalidating the same canonical commands recorded in `implementation.md`, files/updates beads, and syncs `bd`.
   - **Agent**: Writes QA revalidation results into `.beads/artifacts/<id>/landing.md` so that `implementation.md` and `review.md` remain immutable after their stages complete.
-  - **Agent**: For multiple active branchlets, land beads sequentially per the `/land-plane` command template.
+  - **Agent**: For multiple active worktrees, land beads sequentially per the `/land-plane` command template.
   - **Agent**: Commits with `Refs <id>` and optionally pushes.
 - **User**: Merge Pull Request.
-- **User**: `branchlet delete` (cleanup).
+- **User**: `wtp remove` (cleanup).
 
 ## 8. Parallelism & Swarms (Epic Structure)
 To complete Epics faster, structure Beads for **maximum parallel agent execution**:
@@ -148,7 +148,7 @@ To complete Epics faster, structure Beads for **maximum parallel agent execution
 3.  **Dependency Graphing**
     - **Sequential**: If Task B needs Task A's code, `bd create "Task B" --deps blocks:bd-A`.
     - **Parallel (Fan-out)**: If Task A and B are independent, they both just block the Epic.
-  - **Agent Swarm**: You can launch multiple terminal tabs, creating a `branchlet` for each Task, and run `/implement` in parallel. Reference the `/land-plane` checklist when wrapping up each bead.
+  - **Agent Swarm**: You can launch multiple terminal tabs, creating a worktree (via `wtp add`) for each Task, and run `/implement` in parallel. Reference the `/land-plane` checklist when wrapping up each bead.
 
 
 ## 9. Context Hygiene
@@ -163,7 +163,7 @@ To ensure maximum reliability and avoid context window pollution:
 | :--- | :--- |
 | `bd` | Source of Truth (Status, Title, What) |
 | `.md Artifacts` | Context (Research, Plan, Implementation log, Review) - *Stored in .beads/artifacts/* |
-| `branchlet` | Isolation (Filesystem, Git state) |
+| `wtp` | Isolation (Filesystem, Git state) |
 | `slash commands` | Protocol Enforcement (The "Verbs") |
 
 ## Slash Command Reference
@@ -172,7 +172,7 @@ To ensure maximum reliability and avoid context window pollution:
 | :--- | :--- | :--- |
 | `/bd-create` | Ideation | File new beads with lineage and priority. |
 | `/bd-next` | Setup | Select the next bead to execute. |
-| `/branchlet-from-bead` | Setup | Create an isolated worktree tied to the bead. |
+| `/wtp-from-bead` | Setup | Create an isolated worktree tied to the bead. |
 | `/context` | Setup | Load artifacts and summarize the bead’s current state. |
 | `/kb-build` *(optional)* | Setup | Refresh `.beads/kb/` when architecture knowledge is stale. |
 | `/spec` *(optional)* | Research | Produce `spec.md` for complex/ambiguous beads before planning. |

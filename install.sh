@@ -10,32 +10,53 @@ BRANCH="main"
 echo "🚀 Installing Amp Maestro..."
 
 # 1. Install Dependencies
-if ! command -v bd &> /dev/null; then
-    echo "📦 Beads (bd) not found."
-    echo "   Please install it: https://github.com/beads-dev/beads"
-    echo "   (Continuing, but the workflow requires 'bd' to function)"
+if ! command -v mise &> /dev/null; then
+    echo "❌ mise not found. Please install it: https://mise.jdx.dev"
+    exit 1
 fi
 
-if ! command -v branchlet &> /dev/null; then
-    echo "📦 Installing Branchlet..."
-    if command -v npm &> /dev/null; then
-        npm install -g branchlet
+echo "📦 Installing dependencies via mise..."
+
+# Install bd (beads) via go
+if ! command -v bd &> /dev/null; then
+    echo "📦 Installing Beads (bd)..."
+    mise use -g go:github.com/beads-dev/beads/cmd/bd@latest
+else
+    echo "✅ Beads (bd) already installed."
+fi
+
+# Install wtp (worktree plus) via Homebrew
+if ! command -v wtp &> /dev/null; then
+    echo "📦 Installing wtp (worktree plus)..."
+    if command -v brew &> /dev/null; then
+        brew install satococoa/tap/wtp
     else
-        echo "❌ npm not found. Please install node/npm to use Branchlet."
+        echo "❌ Homebrew not found. Please install wtp manually: https://github.com/satococoa/wtp"
+        exit 1
     fi
 else
-    echo "✅ Branchlet already installed."
+    echo "✅ wtp already installed."
 fi
 
 # 2. Setup Directories
 mkdir -p .agents/commands
 mkdir -p .beads/artifacts
+mkdir -p .beads/kb
 
-# 3. Copy Slash Commands
+# 3. Initialize wtp for project-scoped worktree management
+echo "🌳 Initializing wtp (worktree plus)..."
+if [ ! -f ".wtp.yml" ]; then
+    wtp init
+    echo "   Created .wtp.yml - customize base_dir and hooks as needed."
+else
+    echo "✅ .wtp.yml already exists."
+fi
+
+# 4. Copy Slash Commands
 echo "📂 Installing Slash Commands..."
 
 BASE_URL="https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${BRANCH}/templates/.agents/commands"
-FILES="bd-create.md bd-next.md bead-notes.md branchlet-from-bead.md context.md implement.md land-plane.md plan.md research.md review.md spec.md split.md kb-build.md"
+FILES="bd-create.md bd-next.md bead-notes.md wtp-from-bead.md context.md implement.md land-plane.md plan.md research.md review.md spec.md split.md kb-build.md"
 
 for file in $FILES; do
     # If we are running locally (cloned repo), copy from templates
@@ -53,7 +74,7 @@ for file in $FILES; do
     fi
 done
 
-# 4. Install Protocol Docs
+# 5. Install Protocol Docs
 echo "📜 Installing Workflows..."
 if [ -d "./templates" ]; then
     cp "./templates/AGENTIC_WORKFLOW.md" "./AGENTIC_WORKFLOW.md"
@@ -63,7 +84,7 @@ else
     fi
 fi
 
-# 5. Update AGENTS.md
+# 6. Update AGENTS.md
 echo "🤖 Checking AGENTS.md..."
 
 # Function to get template content (either from local file or curl)

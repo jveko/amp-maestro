@@ -82,18 +82,37 @@ It enforces a structured process:
 
 ## Installation
 
-### Option 1: Quick Install (Recommended)
+### Option 1: Quick Install with mise (Recommended)
 Run this command in the root of any project where you want to use Amp Maestro:
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/lleewwiiss/amp-maestro/main/install.sh)"
+# Clone and install with mise
+git clone https://github.com/jveko/amp-maestro.git
+cd amp-maestro
+mise run install
 ```
 
-### Option 2: Developer Install (From Source)
+Or install individual components:
+```bash
+mise run install:deps      # Check/install dependencies (bd, branchlet)
+mise run install:dirs      # Create required directories
+mise run install:commands  # Install slash commands
+mise run install:workflow  # Install workflow docs
+mise run install:agents    # Setup AGENTS.md
+```
+
+### Option 2: Quick Install (Shell Script)
+Run this command in the root of any project where you want to use Amp Maestro:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/jveko/amp-maestro/main/install.sh)"
+```
+
+### Option 3: Developer Install (From Source)
 Use this if you are contributing to Amp Maestro or want to install from a local copy:
 
 ```bash
-git clone https://github.com/lleewwiiss/amp-maestro.git
+git clone https://github.com/jveko/amp-maestro.git
 cd amp-maestro
 ./install.sh
 ```
@@ -150,6 +169,6 @@ cd amp-maestro
 ## Requirements
 
 *   `git`
-*   `npm` / `pnpm` (for branchlet)
+*   `mise` ([mise.jdx.dev](https://mise.jdx.dev)) - installs bd and branchlet automatically
 *   `amp` CLI installed
 *   [Context7 MCP](https://github.com/upstash/context7) (Recommended for `/research` and library docs)
