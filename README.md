@@ -88,40 +88,31 @@ It enforces a structured process:
 ### Prerequisites
 
 - `git`
-- `mise` ([mise.jdx.dev](https://mise.jdx.dev)) - for installing `bd`
-- `brew` (Homebrew) - for installing `wtp`
+- `brew` (Homebrew) - for installing `wtp` and `go`
 - `amp` CLI installed
 
-### Option 1: Quick Install with mise (Recommended)
+### Option 1: Quick Install (Recommended)
 
-```bash
-git clone https://github.com/jveko/amp-maestro.git
-cd amp-maestro
-mise run install
-```
-
-Or install individual components:
-```bash
-mise run install:deps      # Check/install dependencies (bd, wtp)
-mise run install:dirs      # Create required directories
-mise run install:commands  # Install slash commands
-mise run install:workflow  # Install workflow docs
-mise run install:agents    # Setup AGENTS.md
-```
-
-### Option 2: Quick Install (Shell Script)
+Run this in your project root:
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/jveko/amp-maestro/main/install.sh)"
 ```
 
-### Option 3: Developer Install (From Source)
+### Option 2: Install from Source
 
 ```bash
 git clone https://github.com/jveko/amp-maestro.git
 cd amp-maestro
 ./install.sh
 ```
+
+The install script will:
+1. Install `bd` (Beads CLI) via Go
+2. Install `wtp` via Homebrew
+3. Run `wtp init` for project-scoped worktree config
+4. Copy slash commands to `.agents/commands/`
+5. Set up `AGENTS.md` and `AGENTIC_WORKFLOW.md`
 
 ## What Gets Installed
 
