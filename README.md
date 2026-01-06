@@ -9,9 +9,10 @@
  |_|  |_|\__,_|\___||___/\__|_|  \___/
             Amp Maestro
 ```
+
 A structured workflow for Sourcegraph Amp designed for complex tasks. It adds planning, context management, and sub-agent orchestration.
 
-It utilizes **Beads** (Issue Tracking) and **Branchlet** (Worktrees) to manage agent context and isolation.
+It utilizes **Beads** (Issue Tracking) and **wtp** (Worktree Plus) to manage agent context and isolation.
 
 ## Philosophy
 
@@ -21,9 +22,9 @@ This workflow implements the **"Frequent Intentional Compaction"** methodology c
 graph TD
     %% Styling for Dark Mode / High Contrast
     classDef default fill:#2d2d2d,stroke:#fff,stroke-width:2px,color:#fff;
-    classDef bead fill:#b45309,stroke:#fff,stroke-width:2px,color:#fff; %% Orange/Brown
-    classDef git fill:#1d4ed8,stroke:#fff,stroke-width:2px,color:#fff; %% Blue
-    classDef amp fill:#7e22ce,stroke:#fff,stroke-width:2px,color:#fff; %% Purple
+    classDef bead fill:#b45309,stroke:#fff,stroke-width:2px,color:#fff;
+    classDef git fill:#1d4ed8,stroke:#fff,stroke-width:2px,color:#fff;
+    classDef amp fill:#7e22ce,stroke:#fff,stroke-width:2px,color:#fff;
     classDef decision fill:#8b4500,stroke:#fff,stroke-width:2px,color:#fff;
 
     New([User Input]) --> Create
@@ -32,8 +33,8 @@ graph TD
         Create["/bd-create"]:::bead
     end
 
-    subgraph "2. Isolate (Git)"
-        Worktree["/branchlet-from-bead"]:::git
+    subgraph "2. Isolate (wtp)"
+        Worktree["/wtp-from-bead"]:::git
     end
 
     subgraph "3. Agent Loop"
@@ -75,18 +76,25 @@ It enforces a structured process:
 
 ## The Stack
 
-*   **[Amp](https://ampcode.com)**: The AI Coding Agent (with Oracle & Sub-agents).
-*   **[Beads (bd)](https://github.com/beads-dev/beads)**: Lightweight, CLI-first issue tracking that lives in git.
-*   **[Branchlet](https://github.com/raghavpillai/branchlet)**: Git worktree manager for isolated agent environments.
-*   **[HumanLayer](https://github.com/humanlayer/humanlayer)**: Creators of the "Context Engineering" and "12-Factor Agent" methodologies this workflow is based on.
+| Tool | Purpose | Link |
+|------|---------|------|
+| **Amp** | AI Coding Agent (with Oracle & Sub-agents) | [ampcode.com](https://ampcode.com) |
+| **Beads (bd)** | Lightweight, CLI-first issue tracking in git | [beads-dev/beads](https://github.com/beads-dev/beads) |
+| **wtp** | Git worktree manager for isolated environments | [satococoa/wtp](https://github.com/satococoa/wtp) |
+| **HumanLayer** | "Context Engineering" methodology foundation | [humanlayer/humanlayer](https://github.com/humanlayer/humanlayer) |
 
 ## Installation
 
+### Prerequisites
+
+- `git`
+- `mise` ([mise.jdx.dev](https://mise.jdx.dev)) - for installing `bd`
+- `brew` (Homebrew) - for installing `wtp`
+- `amp` CLI installed
+
 ### Option 1: Quick Install with mise (Recommended)
-Run this command in the root of any project where you want to use Amp Maestro:
 
 ```bash
-# Clone and install with mise
 git clone https://github.com/jveko/amp-maestro.git
 cd amp-maestro
 mise run install
@@ -94,7 +102,7 @@ mise run install
 
 Or install individual components:
 ```bash
-mise run install:deps      # Check/install dependencies (bd, branchlet)
+mise run install:deps      # Check/install dependencies (bd, wtp)
 mise run install:dirs      # Create required directories
 mise run install:commands  # Install slash commands
 mise run install:workflow  # Install workflow docs
@@ -102,14 +110,12 @@ mise run install:agents    # Setup AGENTS.md
 ```
 
 ### Option 2: Quick Install (Shell Script)
-Run this command in the root of any project where you want to use Amp Maestro:
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/jveko/amp-maestro/main/install.sh)"
 ```
 
 ### Option 3: Developer Install (From Source)
-Use this if you are contributing to Amp Maestro or want to install from a local copy:
 
 ```bash
 git clone https://github.com/jveko/amp-maestro.git
@@ -117,58 +123,92 @@ cd amp-maestro
 ./install.sh
 ```
 
-## What it installs
+## What Gets Installed
 
-1.  **Slash Commands** (`.agents/commands/`):
-    *   `/bd-create`: Interview-first issue creation.
-    *   `/bd-next`: Pick tasks and guide you into a fresh worktree.
-    *   `/branchlet-from-bead`: Create an isolated worktree tied to a bead.
-    *   `/context`: Load artifacts and summarize current state.
-    *   `/kb-build`: Build/update shared repository knowledge.
-    *   `/spec`: Turn ambiguous beads into `spec.md`.
-    *   `/research`: Deep context gathering (Librarian/MCP).
-    *   `/plan`: Oracle-powered implementation planning.
-    *   `/split`: Break composite plans into child beads.
-    *   `/implement`: Manager/Worker implementation loop with runtime notes.
-    *   `/review`: Plan vs. Implementation verification plus QA capsule.
-    *   `/land-plane`: Final pre-merge checklist and landing artifact.
-    *   `/bead-notes`: Append session summaries back into Beads.
+### Directory Structure
+```
+your-project/
+├── .agents/commands/       # Slash command definitions
+├── .beads/
+│   ├── artifacts/          # Per-bead artifacts (research.md, plan.md, etc.)
+│   ├── kb/                 # Shared knowledge base
+│   └── issues.jsonl        # Issue database
+├── .wtp.yml                # Worktree configuration
+├── AGENTS.md               # Agent guidelines
+└── AGENTIC_WORKFLOW.md     # Protocol documentation
+```
 
-2.  **Protocols**:
-    *   `AGENTIC_WORKFLOW.md`: The master protocol document.
-    *   Updates your `AGENTS.md` with the required "Source of Truth" rules.
+### Slash Commands
+
+| Command | Stage | Description |
+|---------|-------|-------------|
+| `/bd-create` | Track | Interview-first issue creation with lineage |
+| `/bd-next` | Track → Setup | Pick tasks and guide into a fresh worktree |
+| `/wtp-from-bead` | Isolate | Create an isolated worktree tied to a bead |
+| `/context` | Setup | Load artifacts and summarize current state |
+| `/kb-build` | Setup | Build/update shared repository knowledge |
+| `/spec` | Research | Turn ambiguous beads into formal `spec.md` |
+| `/research` | Research | Deep context gathering with code citations |
+| `/plan` | Plan | Oracle-powered implementation planning |
+| `/split` | Plan | Break composite plans into child beads |
+| `/implement` | Work | Manager/Worker loop with runtime notes |
+| `/review` | Quality | Plan vs. Implementation verification + QA capsule |
+| `/land-plane` | Ship | Final pre-merge checklist and landing |
+| `/bead-notes` | Context | Append session summaries back into Beads |
 
 ## Usage
 
-1.  **Start**: `amp`
-2.  **Pick Work**: `/bd-next` (or `/bd-create` for new ideas).
-3.  **Deep Work**: For a chosen bead ID, run `/context <id>` to load artifacts, then follow `/research <id>` → `/plan <id>` → `/implement <id>` → `/review <id>`.
-    *   **Important**: Start a new Amp thread after each command to ensure clean context.
-    *   **Note**: Commands populate the chat with a prompt. **Paste the Bead ID** at the end of the command before sending.
-    *   During `/implement`, copy the canonical build/test command labels from the Test Plan in `.beads/artifacts/<id>/plan.md` into `.beads/artifacts/<id>/implementation.md`, and record actual runs and deviations there instead of ever editing `plan.md`; `/review` and `/land-plane` always refer back to those same labeled commands.
-4.  **Finish**: `/land-plane` to sync beads, commits, and next steps.
+### Quick Start
 
-## Slash Command Playbook
+```bash
+# 1. Start Amp
+amp
 
-| Command | Stage | Why/When |
-| :--- | :--- | :--- |
-| `/bd-create` | Track | Capture new work as a Bead with lineage and priority. |
-| `/bd-next` | Track → Setup | Let Amp propose the best bead to pull next and tee up `/branchlet-from-bead`. |
-| `/branchlet-from-bead` | Isolate | Spawn a dedicated worktree tied to the bead so git state stays focused. |
-| `/context` | Setup | Load existing artifacts (`research.md`, `plan.md`, `implementation.md`, notes) into the session. |
-| `/kb-build` *(optional)* | Setup | Refresh the shared knowledge base when architecture/code references drift. |
-| `/spec` *(optional)* | Research | Turn large or ambiguous beads into a formal `spec.md` before planning. |
-| `/research` | Research | Gather code references and write `research.md` so later steps have hard context. |
-| `/plan` | Plan | Use the Oracle to derive an executable plan stored in `plan.md`, including a Test Plan that defines canonical build/test commands by label (e.g., `test:unit`, `lint:ci`). |
-| `/split` *(conditional)* | Plan | Break composite work into child beads; keeps implementation beads atomic. |
-| `/implement` | Work | Run the Driver/Navigator loop: propose, execute, and verify each step with the user. |
-| `/review` | Quality | Verify implementation, check for slopsquatting/security risks, and generate a Review Capsule. |
-| `/land-plane` | Ship | Run semantic pre-flight checks, revalidate canonical commands, sync beads, and commit. |
-| `/bead-notes` *(optional)* | Context Hygiene | Append a concise session summary back to the bead’s notes for future agents. |
+# 2. Create or pick work
+/bd-create          # Create new issue
+/bd-next            # Pick from backlog
 
-## Requirements
+# 3. Deep work cycle (start new thread after each command)
+/context <id>       # Load context
+/research <id>      # Gather code references
+/plan <id>          # Create implementation plan
+/implement <id>     # Execute with Driver/Navigator loop
+/review <id>        # Verify and generate Review Capsule
 
-*   `git`
-*   `mise` ([mise.jdx.dev](https://mise.jdx.dev)) - installs bd and branchlet automatically
-*   `amp` CLI installed
-*   [Context7 MCP](https://github.com/upstash/context7) (Recommended for `/research` and library docs)
+# 4. Ship
+/land-plane <id>    # Pre-flight checks, commit, push
+```
+
+### Best Practices
+
+- **Start a new Amp thread** after each slash command for clean context
+- **Paste the Bead ID** at the end of commands before sending
+- During `/implement`, copy canonical build/test labels from `plan.md` into `implementation.md`
+- Never edit `plan.md` after approval—use `implementation.md` for deviations
+
+### wtp Commands Reference
+
+| Action | Command |
+|--------|---------|
+| Initialize config | `wtp init` |
+| Create worktree | `wtp add -b <branch>` |
+| Enter worktree | `wtp cd <branch>` |
+| List worktrees | `wtp list` |
+| Remove worktree | `wtp remove <branch>` |
+| Remove with branch | `wtp remove --with-branch <branch>` |
+
+## Artifact Flow
+
+```
+plan.md (immutable after approval)
+    ↓ defines canonical commands
+implementation.md (logs runs + deviations)
+    ↓ references command labels
+review.md (QA evidence)
+    ↓ revalidates same commands
+landing.md (final QA rerun)
+```
+
+## License
+
+MIT
